@@ -1,0 +1,147 @@
+{
+  "nav": {
+    "menu": "Menu",
+    "delivery": "Delivery",
+    "contact": "Contact",
+    "orderButton": "Order Now",
+    "language": "Change language",
+    "comingSoon": "COMING SOON"
+  },
+  "hero": {
+    "tagline": "No Rules. Just Food."
+  },
+  "menu": {
+    "title": "Menu",
+    "badges": {
+      "favorite": "Favorite",
+      "levelup": "Level Up"
+    },
+    "burgers": {
+      "title": "Burgers",
+      "truffleSmash": {
+        "name": "TRUFFLE SMASH",
+        "description": "Truffle mayo, pickled red onion, cheddar cheese"
+      },
+      "cheeseSmash": {
+        "name": "CHEESE SMASH",
+        "description": "Cheddar cheese, mustard, ketchup, onion"
+      }
+    },
+    "tacosAndBurritos": {
+      "title": "Tacos & Burritos",
+      "birriaTaco": {
+        "name": "BIRRIA TACO",
+        "description": "2 for",
+        "priceLabel": "2 for"
+      },
+      "burrito": {
+        "name": "BURRITO",
+        "description": "Texas rice, beans, pico de gallo, choice of protein"
+      }
+    },
+    "bowls": {
+      "title": "Bowls",
+      "hogrevBowl": {
+        "name": "HÖGREV BOWL",
+        "description": "Slow-cooked chuck beef, Texas rice, salad, sauce"
+      },
+      "kycklingBowl": {
+        "name": "KYCKLING BOWL",
+        "description": "Fried chicken, Texas rice, salad, sauce"
+      }
+    },
+    "sides": {
+      "title": "Sides",
+      "pommes": {
+        "name": "POMMES",
+        "description": "Crispy french fries"
+      },
+      "truffleGoldFries": {
+        "name": "TRUFFLE GOLD FRIES",
+        "description": "Fries with truffle mayo and parmesan"
+      },
+      "garlicButterPasta": {
+        "name": "GARLIC BUTTER PASTA",
+        "description": "Pasta with garlic butter"
+      },
+      "friedChicken": {
+        "name": "FRIED CHICKEN",
+        "description": "Crispy fried chicken"
+      }
+    },
+    "vegetarian": {
+      "title": "Vegetarian",
+      "falafel": {
+        "name": "FALAFEL",
+        "description": "Swap"
+      },
+      "friteradHalloumi": {
+        "name": "FRITERAD HALLOUMI",
+        "description": "+10 kr"
+      }
+    },
+    "sauces": {
+      "title": "Sauces",
+      "jalapenomajo": {
+        "name": "JALAPEÑEMAJO",
+        "description": "Creamy jalapeno mayonnaise"
+      },
+      "chilimajonnas": {
+        "name": "CHILIMAJONNÄS",
+        "description": "Spicy chili mayonnaise"
+      },
+      "tryffelmajonnas": {
+        "name": "TRYFFELMAJONNÄS",
+        "description": "Truffle mayonnaise"
+      },
+      "sdDressing": {
+        "name": "SD DRESSING",
+        "description": "Street Dudes signature dressing"
+      }
+    },
+    "extras": {
+      "title": "Extras",
+      "extraProtein": {
+        "name": "EXTRA PROTEIN",
+        "description": "Extra protein for your bowl or burrito"
+      },
+      "extraBurgarpuck": {
+        "name": "EXTRA BURGARPUCK",
+        "description": "Extra smash burger patty 80g"
+      },
+      "extraRis": {
+        "name": "EXTRA RIS",
+        "description": "Extra white rice"
+      },
+      "extraTexasRis": {
+        "name": "EXTRA TEXAS RIS",
+        "description": "Extra spiced Texas rice"
+      },
+      "extraSas": {
+        "name": "EXTRA SÅS",
+        "description": "Extra choice of sauce"
+      }
+    },
+    "drinks": {
+      "title": "Drinks",
+      "lask": {
+        "name": "LÄSK",
+        "description": "33cl soda"
+      }
+    }
+  },
+  "footer": {
+    "address": "Street Dudes, Borås, Sweden",
+    "openingHours": "Mon-Fri: 11:00 AM - 9:00 PM, Sat-Sun: 12:00 PM - 10:00 PM",
+    "mapLink": "View on Google Maps",
+    "tagline": "Made with love in Borås."
+  },
+  "a11y": {
+    "languageToggle": "Change language to Swedish",
+    "map": "Map showing restaurant location"
+  },
+  "metadata": {
+    "title": "Street Dudes Borås — Smash Burgers, Tacos & Bowls",
+    "description": "Street Dudes in Borås serves the best smash burgers, crispy tacos, delicious bowls, and fresh sides in town. View our menu and visit us at Alingsåsvägen!"
+  }
+}

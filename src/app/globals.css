@@ -25,3 +25,25 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Custom brand animation for the coming soon flashing labels */
+@keyframes flash-label {
+  0%,
+  49% {
+    color: #f5a500;
+    background-color: transparent;
+    border-style: dashed;
+    border-color: #f5a500;
+  }
+  50%,
+  100% {
+    color: #0b0b0b;
+    background-color: #f5a500;
+    border-style: solid;
+    border-color: #f5a500;
+  }
+}
+
+.animate-flash-label {
+  animation: flash-label 1s infinite steps(1, end);
+}

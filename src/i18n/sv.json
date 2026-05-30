@@ -1,0 +1,147 @@
+{
+  "nav": {
+    "menu": "Meny",
+    "delivery": "Leverans",
+    "contact": "Kontakt",
+    "orderButton": "Beställ nu",
+    "language": "Ändra språk",
+    "comingSoon": "KOMMER SNART"
+  },
+  "hero": {
+    "tagline": "Inga regler. Bara mat."
+  },
+  "menu": {
+    "title": "Meny",
+    "badges": {
+      "favorite": "Favorit",
+      "levelup": "Level Up"
+    },
+    "burgers": {
+      "title": "Burgare",
+      "truffleSmash": {
+        "name": "TRUFFLE SMASH",
+        "description": "Tryffelmajonnäs, picklad lök, cheddarost"
+      },
+      "cheeseSmash": {
+        "name": "CHEESE SMASH",
+        "description": "Cheddarost, senap, ketchup, lök"
+      }
+    },
+    "tacosAndBurritos": {
+      "title": "Tacos & Burritos",
+      "birriaTaco": {
+        "name": "BIRRIA TACO",
+        "description": "2 för",
+        "priceLabel": "2 för"
+      },
+      "burrito": {
+        "name": "BURRITO",
+        "description": "Texas ris, bönor, pico de gallo, valfritt protein"
+      }
+    },
+    "bowls": {
+      "title": "Skålar",
+      "hogrevBowl": {
+        "name": "HÖGREV BOWL",
+        "description": "Långkokt högrev, Texas ris, sallad, sås"
+      },
+      "kycklingBowl": {
+        "name": "KYCKLING BOWL",
+        "description": "Friterad kyckling, Texas ris, sallad, sås"
+      }
+    },
+    "sides": {
+      "title": "Tillbehör",
+      "pommes": {
+        "name": "POMMES",
+        "description": "Krispiga pommes frites"
+      },
+      "truffleGoldFries": {
+        "name": "TRUFFLE GOLD FRIES",
+        "description": "Pommes med tryffelmajonnäs och parmesan"
+      },
+      "garlicButterPasta": {
+        "name": "GARLIC BUTTER PASTA",
+        "description": "Pasta med vitlökssmör"
+      },
+      "friedChicken": {
+        "name": "FRIED CHICKEN",
+        "description": "Krispig friterad kyckling"
+      }
+    },
+    "vegetarian": {
+      "title": "Vegetariskt",
+      "falafel": {
+        "name": "FALAFEL",
+        "description": "Swap"
+      },
+      "friteradHalloumi": {
+        "name": "FRITERAD HALLOUMI",
+        "description": "+10 kr"
+      }
+    },
+    "sauces": {
+      "title": "Såser",
+      "jalapenomajo": {
+        "name": "JALAPEÑEMAJO",
+        "description": "Krämig jalapenomajonnäs"
+      },
+      "chilimajonnas": {
+        "name": "CHILIMAJONNÄS",
+        "description": "Het chilimajonnäs"
+      },
+      "tryffelmajonnas": {
+        "name": "TRYFFELMAJONNÄS",
+        "description": "Tryffelmajonnäs"
+      },
+      "sdDressing": {
+        "name": "SD DRESSING",
+        "description": "Street Dudes signaturdressing"
+      }
+    },
+    "extras": {
+      "title": "Tillval",
+      "extraProtein": {
+        "name": "EXTRA PROTEIN",
+        "description": "Extra protein för din bowl eller burrito"
+      },
+      "extraBurgarpuck": {
+        "name": "EXTRA BURGARPUCK",
+        "description": "Extra smashburgare puck 80g"
+      },
+      "extraRis": {
+        "name": "EXTRA RIS",
+        "description": "Extra vitt ris"
+      },
+      "extraTexasRis": {
+        "name": "EXTRA TEXAS RIS",
+        "description": "Extra kryddat Texas ris"
+      },
+      "extraSas": {
+        "name": "EXTRA SÅS",
+        "description": "Extra valfri sås"
+      }
+    },
+    "drinks": {
+      "title": "Dryck",
+      "lask": {
+        "name": "LÄSK",
+        "description": "33cl läsk"
+      }
+    }
+  },
+  "footer": {
+    "address": "Street Dudes, Borås, Sverige",
+    "openingHours": "Mån-Fre: 11:00 - 21:00, Lör-Sön: 12:00 - 22:00",
+    "mapLink": "Visa på Google Maps",
+    "tagline": "Gjord med kärlek i Borås."
+  },
+  "a11y": {
+    "languageToggle": "Ändra språk till engelska",
+    "map": "Karta över restaurangens läge"
+  },
+  "metadata": {
+    "title": "Street Dudes Borås — Smashburgare, Tacos & Bowls",
+    "description": "Street Dudes i Borås serverar stans bästa smashburgare, krispiga tacos, matiga skålar och fräscha tillbehör. Se vår meny och besök oss på Alingsåsvägen!"
+  }
+}
