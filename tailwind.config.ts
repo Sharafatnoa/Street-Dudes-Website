@@ -13,8 +13,8 @@ const config: Config = {
         foreground: 'var(--foreground)',
       },
       fontFamily: {
-        sans: ['var(--font-archivo)', 'sans-serif'],
-        display: ['var(--font-bebas-neue)', 'sans-serif'],
+        display: ['var(--font-bebas-neue)', 'Impact', 'sans-serif'],
+        body:    ['var(--font-archivo)', 'system-ui', 'sans-serif'],
       },
     },
   },

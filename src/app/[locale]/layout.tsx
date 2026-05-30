@@ -16,6 +16,7 @@ const bebasNeue = Bebas_Neue({
 
 const archivo = Archivo({
   subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-archivo',
   display: 'swap',
 });
@@ -60,10 +61,8 @@ export default async function LocaleLayout({ children, params: { locale } }: Loc
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
-      <body
-        className={`${archivo.variable} ${bebasNeue.variable} bg-zinc-950 text-white min-h-screen antialiased`}
-      >
+    <html lang={locale} className={`${bebasNeue.variable} ${archivo.variable}`}>
+      <body className="bg-zinc-950 text-white min-h-screen antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
         </NextIntlClientProvider>

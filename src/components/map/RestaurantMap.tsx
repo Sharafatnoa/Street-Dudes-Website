@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useTranslations, useLocale } from 'next-intl';
+import { useLocale } from 'next-intl';
 
 /**
  * RestaurantMap component renders an interactive Google Maps iframe
@@ -10,11 +10,8 @@ import { useTranslations, useLocale } from 'next-intl';
  * WHY: Provides standard map visualization with zero runtime crashes in missing credential situations.
  */
 export function RestaurantMap() {
-  const tA11y = useTranslations('a11y');
   const locale = useLocale();
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
-
-  const titleText = tA11y('map');
 
   // If API key is missing or not configured, render the premium fallback placeholder
   if (!apiKey || apiKey.trim() === '') {
@@ -58,7 +55,13 @@ export function RestaurantMap() {
     );
   }
 
-  const embedUrl = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent('Street Dudes, Alingsåsvägen, Borås')}`;
+  const MAP_URL =
+    `https://www.google.com/maps/embed/v1/place` +
+    `?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}` +
+    `&q=Street+Dudes+Bor%C3%A5s` +
+    `&center=57.7213,13.0173` +
+    `&zoom=17` +
+    `&language=sv`;
 
   return (
     <div
@@ -66,11 +69,11 @@ export function RestaurantMap() {
       className="relative w-full h-64 bg-[#141414] border border-[rgba(255,255,255,0.08)] rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:border-[#F5A500]/30"
     >
       <iframe
-        title={titleText}
-        src={embedUrl}
+        title="Street Dudes Borås på Google Maps"
+        src={MAP_URL}
         width="100%"
         height="100%"
-        style={{ border: 0 }}
+        style={{ border: 0, minHeight: '200px' }}
         allowFullScreen
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
