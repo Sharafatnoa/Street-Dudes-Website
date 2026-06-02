@@ -12,7 +12,7 @@ describe('Menu content structure validation', () => {
 
   it('verifies that every item with a price > 0 has a valid numeric price', () => {
     allItems.forEach((item) => {
-      if (item.price > 0) {
+      if (item.price !== undefined && item.price > 0) {
         expect(typeof item.price).toBe('number');
         expect(Number.isNaN(item.price)).toBe(false);
       }

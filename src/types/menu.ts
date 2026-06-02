@@ -9,9 +9,10 @@ export type MenuItem = {
   id: string;
   nameKey: string; // The localization dot-notation lookup key for the dish name
   descriptionKey: string; // The localization dot-notation lookup key for the dish description
-  price: number; // Numeric price in Swedish Krona (SEK)
+  price?: number; // Numeric price in Swedish Krona (SEK)
   badge?: MenuItemBadge; // Optional promotional highlight tags
   priceLabelKey?: string; // Optional custom pricing prefix label key (e.g. 2 för)
+  isAddon?: boolean; // Optional indicator that this item is an addon
 };
 
 export type MenuCategory = {

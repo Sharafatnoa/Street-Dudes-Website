@@ -52,9 +52,11 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
               .join(' · ')}
           </p>
         </div>
-        <span className="text-lg font-bold font-display text-[#F5A500] whitespace-nowrap">
-          {formatPrice(item.price, priceLabel)}
-        </span>
+        {item.price !== undefined && item.price > 0 && (
+          <span className="text-lg font-bold font-display text-[#F5A500] whitespace-nowrap">
+            {item.isAddon ? `+${item.price} kr` : formatPrice(item.price, priceLabel)}
+          </span>
+        )}
       </div>
     </div>
   );
