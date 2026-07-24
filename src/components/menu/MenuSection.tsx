@@ -1,9 +1,9 @@
 /**
  * MenuSection renders a specific food category, including section header and matching grid cards.
  * Filters out items with type 'addon' so addons (and categories with only addons) remain hidden.
- * Passes interactive prop to MenuItemCard.
+ * Passes interactive prop and item unavailability status to MenuItemCard.
  *
- * @param props - Component props containing category schema and interactive boolean.
+ * @param props - Component props containing category schema, interactive boolean, and optional unavailableItemIds array.
  *
  * WHY: Modularly encapsulates item listings by groups, supporting read-only or interactive modes.
  */
@@ -18,9 +18,14 @@ import { MenuItemCard } from './MenuItemCard'
 export type MenuSectionProps = {
   category: MenuCategory
   interactive?: boolean
+  unavailableItemIds?: string[]
 }
 
-export function MenuSection({ category, interactive = false }: MenuSectionProps) {
+export function MenuSection({
+  category,
+  interactive = false,
+  unavailableItemIds = [],
+}: MenuSectionProps) {
   const t = useTranslations()
 
   const visibleItems = category.items.filter(
@@ -41,7 +46,12 @@ export function MenuSection({ category, interactive = false }: MenuSectionProps)
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {visibleItems.map((item) => (
-          <MenuItemCard key={item.id} item={item} interactive={interactive} />
+          <MenuItemCard
+            key={item.id}
+            item={item}
+            interactive={interactive}
+            isUnavailable={unavailableItemIds.includes(item.id)}
+          />
         ))}
       </div>
     </section>

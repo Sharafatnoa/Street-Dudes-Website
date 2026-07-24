@@ -2,10 +2,11 @@
  * MenuItemCard displays a single menu item with Option C split bottom bar layout.
  * When interactive is false (homepage), it renders price in bottom bar read-only.
  * When interactive is true (order page), clicking split button triggers customization modal or cart addition.
+ * When item is unavailable, renders "Slut för idag" disabled bottom bar.
  *
- * @param props - MenuItemCardProps containing menu item and optional interactive boolean.
+ * @param props - MenuItemCardProps containing menu item, interactive boolean, and optional isUnavailable boolean.
  *
- * WHY: Delivers premium split-action card UX anchoring price and call-to-action seamlessly.
+ * WHY: Delivers premium split-action card UX anchoring price, call-to-action, and real-time inventory status.
  */
 
 'use client'
@@ -20,15 +21,20 @@ import type { MenuItem } from '@/types/menu'
 export type MenuItemCardProps = {
   item: MenuItem
   interactive?: boolean
+  isUnavailable?: boolean
 }
 
-export default function MenuItemCard({ item, interactive = false }: MenuItemCardProps) {
+export default function MenuItemCard({
+  item,
+  interactive = false,
+  isUnavailable = false,
+}: MenuItemCardProps) {
   const { addSimpleItem } = useCart()
   const t = useTranslations()
   const [modalOpen, setModalOpen] = useState(false)
 
   function handleAddClick() {
-    if (!interactive) return
+    if (!interactive || isUnavailable) return
     if (item.type === 'main') {
       setModalOpen(true)
     } else {
@@ -65,8 +71,21 @@ export default function MenuItemCard({ item, interactive = false }: MenuItemCard
           </p>
         </div>
 
-        {/* Split bottom bar */}
-        {interactive ? (
+        {/* Split bottom bar / Unavailable state */}
+        {isUnavailable ? (
+          <div className="flex items-stretch border-t border-white/10">
+            <div className="flex items-center justify-center px-5 py-3 flex-1 border-r border-white/10">
+              <span className="font-display text-white/30 text-xl line-through font-bold">
+                {item.price} kr
+              </span>
+            </div>
+            <div className="flex items-center justify-center px-5 py-3 flex-1 bg-white/5">
+              <span className="font-display text-white/30 text-sm uppercase tracking-widest font-bold">
+                Slut för idag
+              </span>
+            </div>
+          </div>
+        ) : interactive ? (
           <button
             onClick={handleAddClick}
             className="flex items-stretch border-t border-white/10 hover:border-brand-gold/40 transition-colors group w-full text-left"
@@ -97,8 +116,8 @@ export default function MenuItemCard({ item, interactive = false }: MenuItemCard
         )}
       </div>
 
-      {/* Customization modal — only when interactive and for main items */}
-      {interactive && item.type === 'main' && (
+      {/* Customization modal — only when interactive, available, and for main items */}
+      {interactive && !isUnavailable && item.type === 'main' && (
         <ItemCustomizationModal
           item={item}
           isOpen={modalOpen}

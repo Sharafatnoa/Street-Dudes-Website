@@ -21,6 +21,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { geocodeAddress } from '@/lib/geocode'
 import { calculateDistanceKm } from '@/lib/haversine'
 import { getConfig } from '@/lib/getConfig'
+import { isAcceptingOrders, getRestaurantStatus } from '@/lib/openingHours'
 import type { DeliveryValidation } from '@/types/delivery'
 
 export async function POST(request: NextRequest) {
@@ -47,9 +48,10 @@ export async function POST(request: NextRequest) {
     const config = await getConfig()
 
     // Check if restaurant is accepting orders
-    if (!config.isOpen) {
+    if (!isAcceptingOrders(config)) {
+      const status = getRestaurantStatus(config)
       return NextResponse.json(
-        { error: 'Restaurant is currently closed' },
+        { error: status.message },
         { status: 503 }
       )
     }

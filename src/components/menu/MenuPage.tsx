@@ -1,8 +1,8 @@
 /**
  * MenuPage component that assembles dynamic tabs and all menu category sections.
- * Supports interactive boolean prop to toggle ordering functionality.
+ * Supports interactive boolean prop to toggle ordering functionality and unavailableItemIds array.
  *
- * @param props - MenuPageProps containing optional interactive boolean.
+ * @param props - MenuPageProps containing optional interactive boolean and unavailableItemIds array.
  *
  * WHY: Serves as the unique component responsible for pulling static MENU_DATA record
  * and rendering read-only (homepage) or interactive (order page) menu sections.
@@ -17,9 +17,13 @@ import { OrderButton } from '../OrderButton'
 
 export type MenuPageProps = {
   interactive?: boolean
+  unavailableItemIds?: string[]
 }
 
-export function MenuPage({ interactive = false }: MenuPageProps) {
+export function MenuPage({
+  interactive = false,
+  unavailableItemIds = [],
+}: MenuPageProps) {
   const t = useTranslations()
 
   // Map category listings to tab navigation labels, filtering out addon-only categories
@@ -38,7 +42,12 @@ export function MenuPage({ interactive = false }: MenuPageProps) {
       {/* Categories section content list */}
       <div className="max-w-4xl mx-auto px-4 w-full flex flex-col gap-12 mt-6">
         {MENU_DATA.categories.map((category) => (
-          <MenuSection key={category.id} category={category} interactive={interactive} />
+          <MenuSection
+            key={category.id}
+            category={category}
+            interactive={interactive}
+            unavailableItemIds={unavailableItemIds}
+          />
         ))}
       </div>
 
