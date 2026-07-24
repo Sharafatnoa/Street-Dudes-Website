@@ -12,7 +12,19 @@ export type AppConfig = {
   freeDeliveryThresholdKr: number
   minOrderKr: number
   estimatedDeliveryMins: number
+  estimatedPickupMins: number
   isOpen: boolean
+  isPaused: boolean
+  pauseMessage: string
+  pauseUntil: string
+  deliveryEnabled: boolean
+  pickupEnabled: boolean
   restaurantLat: number
   restaurantLng: number
+  weekdayOpen: string
+  weekdayBreakStart: string
+  weekdayBreakEnd: string
+  weekdayClose: string
+  weekendOpen: string
+  weekendClose: string
 }
