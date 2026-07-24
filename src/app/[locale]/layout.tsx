@@ -5,6 +5,7 @@ import { getMessages, setRequestLocale, getTranslations } from 'next-intl/server
 import { notFound } from 'next/navigation';
 import { Bebas_Neue, Archivo } from 'next/font/google';
 import { locales } from '@/navigation';
+import { CartProvider } from '@/context/CartContext';
 import '../globals.css';
 
 const bebasNeue = Bebas_Neue({
@@ -64,7 +65,9 @@ export default async function LocaleLayout({ children, params: { locale } }: Loc
     <html lang={locale} className={`${bebasNeue.variable} ${archivo.variable}`}>
       <body className="bg-zinc-950 text-white min-h-screen antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
+          <CartProvider>
+            {children}
+          </CartProvider>
         </NextIntlClientProvider>
       </body>
     </html>

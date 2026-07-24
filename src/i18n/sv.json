@@ -4,6 +4,7 @@
     "delivery": "Leverans",
     "contact": "Kontakt",
     "orderButton": "Beställ nu",
+    "orderOnline": "Beställ Online",
     "language": "Ändra språk",
     "comingSoon": "KOMMER SNART"
   },
@@ -13,9 +14,97 @@
   },
   "menu": {
     "title": "Meny",
+    "customize": "VÄLJ",
     "badges": {
       "favorite": "Favorit",
       "levelup": "Level Up"
+    },
+    "categories": {
+      "burgers": "Burgare",
+      "tacosBurritos": "Tacos & Burritos",
+      "bowls": "Bowls",
+      "sides": "Tillbehör",
+      "sauces": "Såser",
+      "drinks": "Dryck",
+      "addons": "Tillval"
+    },
+    "items": {
+      "truffleSmash": {
+        "name": "TRUFFLE SMASH",
+        "description": "Crispsallad · cheddarost · tryffelmajonnäs · stekt lök · rostad lök"
+      },
+      "cheeseSmash": {
+        "name": "CHEESE SMASH",
+        "description": "Cheddarost · senap · ketchup · lök · picklad gurka · majonnäs"
+      },
+      "birriaTaco": {
+        "name": "BIRRIA TACO",
+        "description": "Högrev · Ost · Rå lök · Koriander · Consommé"
+      },
+      "burrito": {
+        "name": "BURRITO",
+        "description": "Signature ris · Högrev · Ost · Lök · Crunch · Streetdudes Dressing"
+      },
+      "hogrevBowl": {
+        "name": "HÖGREV BOWL",
+        "description": "Långkokt högrev · Signature ris · koriander · picklad rödkål · jalapeñomajonnäs · Streetdudes Dressing"
+      },
+      "kycklingBowl": {
+        "name": "KYCKLING BOWL",
+        "description": "Friterad kyckling · ris · picklad rödkål · chilimajonnäs · rostad lök"
+      },
+      "pommes": {
+        "name": "POMMES",
+        "description": "Krispiga pommes frites"
+      },
+      "truffleGoldFries": {
+        "name": "TRUFFLE GOLD FRIES",
+        "description": "Pommes med tryffelmajonnäs · parmesan · persilja"
+      },
+      "friedChicken": {
+        "name": "FRIED CHICKEN",
+        "description": "Krispig friterad kyckling"
+      },
+      "jalapenemajo": {
+        "name": "JALAPEÑEMAJO",
+        "description": "Krämig jalapenomajonnäs"
+      },
+      "chilimajonnäs": {
+        "name": "CHILIMAJONNÄS",
+        "description": "Het chilimajonnäs"
+      },
+      "tryffelmajonnäs": {
+        "name": "TRYFFELMAJONNÄS",
+        "description": "Tryffelmajonnäs"
+      },
+      "sdDressing": {
+        "name": "SD DRESSING",
+        "description": "Street Dudes signaturdressing"
+      },
+      "lask": {
+        "name": "LÄSK",
+        "description": "33cl läsk"
+      },
+      "extraBurgarpuck": {
+        "name": "EXTRA BURGARPUCK",
+        "description": "Extra smashburgare puck 160g"
+      },
+      "extraProtein": {
+        "name": "EXTRA PROTEIN",
+        "description": "Extra protein för din bowl eller burrito"
+      },
+      "extraRis": {
+        "name": "EXTRA RIS",
+        "description": "Extra vitt ris"
+      },
+      "extraSignatureRis": {
+        "name": "EXTRA SIGNATURE RIS",
+        "description": "Extra kryddat Signature ris"
+      },
+      "extraSas": {
+        "name": "EXTRA SÅS",
+        "description": "Extra valfri sås"
+      }
     },
     "burgers": {
       "title": "Burgare",
@@ -41,7 +130,7 @@
       }
     },
     "bowls": {
-      "title": "Siders",
+      "title": "Bowls",
       "hogrevBowl": {
         "name": "HÖGREV BOWL",
         "description": "Långkokt högrev · Signature ris · koriander · picklad rödkål · jalapeñomajonnäs · Streetdudes Dressing"
@@ -127,6 +216,24 @@
       }
     }
   },
+  "modal": {
+    "swapProtein": "Byt protein",
+    "pickOne": "välj ett alternativ",
+    "keepOriginal": "Behåll originalet",
+    "included": "Ingår",
+    "free": "Kostnadsfritt",
+    "removeIngredients": "Ingredienser",
+    "tapToRemove": "tryck för att ta bort",
+    "removalNote": "Grönt = ingår · Rött = borttaget",
+    "addSauce": "Lägg till sås",
+    "sauceLabel": "+Sås till maten",
+    "sauceNote": "Ange önskad sås i anteckningar nedan",
+    "addExtras": "Lägg till extra",
+    "instructions": "Anteckningar och allergier",
+    "instructionsPlaceholder": "T.ex. utan nötter, jordnötsallergi, önskad sås...",
+    "total": "Totalt",
+    "addToCart": "Lägg till i beställning"
+  },
   "footer": {
     "address": "Alingsåsvägen 40, 504 38 Borås",
     "phone": "0705-937920",
@@ -141,5 +248,16 @@
   "metadata": {
     "title": "Street Dudes Borås — Smashburgare, Tacos & Bowls",
     "description": "Street Dudes i Borås serverar stans bästa smashburgare, krispiga tacos, matiga skålar och fräscha tillbehör. Se vår meny och besök oss på Alingsåsvägen!"
+  },
+  "cart": {
+    "title": "Din beställning",
+    "empty": "Din varukorg är tom",
+    "addToCart": "LÄGG TILL",
+    "openCart": "Öppna varukorg",
+    "close": "Stäng",
+    "subtotal": "Delsumma",
+    "checkout": "Gå till kassan",
+    "itemCount": "varor",
+    "viewOrder": "Visa beställning"
   }
 }

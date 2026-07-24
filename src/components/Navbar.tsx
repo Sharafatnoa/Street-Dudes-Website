@@ -1,41 +1,45 @@
-'use client';
+'use client'
 
-import React from 'react';
-import { useTranslations } from 'next-intl';
-import { LanguageToggle } from './ui/LanguageToggle';
-import { OrderButton } from './OrderButton';
+import React from 'react'
+import { useTranslations, useLocale } from 'next-intl'
+import { LanguageToggle } from './ui/LanguageToggle'
+import Link from 'next/link'
 
 /**
- * Navbar component providing sticky primary header navigation and branding controls.
+ * Navbar component providing sticky primary header navigation, language toggle, and ORDER ONLINE action button.
  *
- * WHY: Delivers central header responsive layout anchoring major viewport actions.
+ * WHY: Delivers Phase 1 central header navigation layout linking to the dedicated order page.
  */
 export function Navbar() {
-  const t = useTranslations();
+  const t = useTranslations()
+  const locale = useLocale()
 
   // Navigation target mappings scrolling to corresponding sections
   const navLinks = [
-    { id: 'burgers', label: t('menu.burgers.title') },
-    { id: 'tacosAndBurritos', label: t('menu.tacosAndBurritos.title') },
-    { id: 'bowls', label: t('menu.bowls.title') },
-    { id: 'sides', label: t('menu.sides.title') },
-  ];
+    { id: 'burgers', label: t('menu.categories.burgers') },
+    { id: 'tacos-burritos', label: t('menu.categories.tacosBurritos') },
+    { id: 'bowls', label: t('menu.categories.bowls') },
+    { id: 'sides', label: t('menu.categories.sides') },
+  ]
 
   const handleScroll = (id: string) => {
-    const element = document.getElementById(id);
+    const element = document.getElementById(id)
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
-  };
+  }
 
   return (
     <nav className="sticky top-0 z-50 bg-[#0b0b0b] border-b border-zinc-900 py-4 px-6 shadow-xl">
       <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
         {/* Brand Logo - Left */}
         <div className="flex items-center">
-          <h1 className="text-2xl font-extrabold tracking-wider text-[#F5A500] font-display uppercase">
+          <Link
+            href={`/${locale}`}
+            className="text-2xl font-extrabold tracking-wider text-[#F5A500] font-display uppercase"
+          >
             STREET DUDES
-          </h1>
+          </Link>
         </div>
 
         {/* Central Nav Links - Hidden on mobile (< md), visible on desktop */}
@@ -54,11 +58,16 @@ export function Navbar() {
         {/* Action Controls - Right */}
         <div className="flex items-center gap-4">
           <LanguageToggle />
-          <div className="scale-90 md:scale-100 transform origin-right">
-            <OrderButton />
-          </div>
+          <Link
+            href={`/${locale}/order`}
+            className="bg-brand-gold text-brand-black px-4 py-2 font-display text-sm uppercase tracking-widest rounded-sm hover:bg-yellow-400 transition-colors font-bold whitespace-nowrap"
+          >
+            {t('nav.orderOnline')}
+          </Link>
         </div>
       </div>
     </nav>
-  );
+  )
 }
+
+export default Navbar

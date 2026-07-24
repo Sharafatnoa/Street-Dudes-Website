@@ -44,3 +44,58 @@ export type CreateOrderInput = {
   items: OrderItem[]
   notes?: string
 }
+
+/** A protein swap the customer selected */
+export type SelectedProteinSwap = {
+  id: string
+  name: string
+  priceDelta: number
+}
+
+/** An addon the customer added (Extra Burgarpuck etc.) */
+export type SelectedAddon = {
+  menuItemId: string
+  name: string
+  price: number
+}
+
+/** A single item in the customer's cart with all customizations */
+export type CartItem = {
+  cartItemId: string            // Unique ID for this cart entry
+  menuItemId: string
+  name: string
+  basePrice: number             // Price before customizations
+  proteinSwap: SelectedProteinSwap | null  // Meat alternative if chosen
+  removedIngredients: string[]  // Ingredients customer removed (free)
+  addedSauce: boolean           // Whether +Sås +10kr was added
+  addons: SelectedAddon[]       // Extra items added (Extra Burgarpuck etc.)
+  specialInstructions: string   // Allergy notes and preferences
+  totalPrice: number            // basePrice + all extras
+  quantity: number
+}
+
+/** The complete cart state */
+export type Cart = {
+  items: CartItem[]
+  itemCount: number
+  subtotal: number
+}
+
+/** Empty cart — used as initial state */
+export const EMPTY_CART: Cart = {
+  items: [],
+  itemCount: 0,
+  subtotal: 0,
+}
+
+/** Input when adding item from customization modal */
+export type AddToCartInput = {
+  menuItemId: string
+  name: string
+  basePrice: number
+  proteinSwap: SelectedProteinSwap | null
+  removedIngredients: string[]
+  addedSauce: boolean
+  addons: SelectedAddon[]
+  specialInstructions: string
+}

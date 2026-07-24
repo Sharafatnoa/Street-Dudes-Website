@@ -4,6 +4,7 @@
     "delivery": "Delivery",
     "contact": "Contact",
     "orderButton": "Order Now",
+    "orderOnline": "Order Online",
     "language": "Change language",
     "comingSoon": "COMING SOON"
   },
@@ -13,9 +14,97 @@
   },
   "menu": {
     "title": "Menu",
+    "customize": "CHOOSE",
     "badges": {
       "favorite": "Favorite",
       "levelup": "Level Up"
+    },
+    "categories": {
+      "burgers": "Burgers",
+      "tacosBurritos": "Tacos & Burritos",
+      "bowls": "Bowls",
+      "sides": "Sides",
+      "sauces": "Sauces",
+      "drinks": "Drinks",
+      "addons": "Extras"
+    },
+    "items": {
+      "truffleSmash": {
+        "name": "TRUFFLE SMASH",
+        "description": "Iceberg lettuce · cheddar cheese · truffle mayo · fried onion · crispy onion"
+      },
+      "cheeseSmash": {
+        "name": "CHEESE SMASH",
+        "description": "Cheddar cheese · mustard · ketchup · onion · pickled cucumber · mayo"
+      },
+      "birriaTaco": {
+        "name": "BIRRIA TACO",
+        "description": "Beef brisket · Cheese · Raw onion · Cilantro · Consommé"
+      },
+      "burrito": {
+        "name": "BURRITO",
+        "description": "Signature rice · Beef brisket · Cheese · Onion · Crunch · Streetdudes Dressing"
+      },
+      "hogrevBowl": {
+        "name": "HÖGREV BOWL",
+        "description": "Slow-cooked beef brisket · Signature rice · cilantro · pickled red cabbage · jalapeño mayo · Streetdudes Dressing"
+      },
+      "kycklingBowl": {
+        "name": "KYCKLING BOWL",
+        "description": "Fried chicken · rice · pickled red cabbage · chili mayo · crispy onion"
+      },
+      "pommes": {
+        "name": "POMMES",
+        "description": "Crispy french fries"
+      },
+      "truffleGoldFries": {
+        "name": "TRUFFLE GOLD FRIES",
+        "description": "Fries with truffle mayo · parmesan · parsley"
+      },
+      "friedChicken": {
+        "name": "FRIED CHICKEN",
+        "description": "Crispy fried chicken"
+      },
+      "jalapenemajo": {
+        "name": "JALAPEÑEMAJO",
+        "description": "Creamy jalapeno mayonnaise"
+      },
+      "chilimajonnäs": {
+        "name": "CHILIMAJONNÄS",
+        "description": "Spicy chili mayonnaise"
+      },
+      "tryffelmajonnäs": {
+        "name": "TRYFFELMAJONNÄS",
+        "description": "Truffle mayonnaise"
+      },
+      "sdDressing": {
+        "name": "SD DRESSING",
+        "description": "Street Dudes signature dressing"
+      },
+      "lask": {
+        "name": "LÄSK",
+        "description": "33cl soda"
+      },
+      "extraBurgarpuck": {
+        "name": "EXTRA BURGARPUCK",
+        "description": "Extra smash burger patty 160g"
+      },
+      "extraProtein": {
+        "name": "EXTRA PROTEIN",
+        "description": "Extra protein for your bowl or burrito"
+      },
+      "extraRis": {
+        "name": "EXTRA RIS",
+        "description": "Extra white rice"
+      },
+      "extraSignatureRis": {
+        "name": "EXTRA SIGNATURE RICE",
+        "description": "Extra spiced Signature rice"
+      },
+      "extraSas": {
+        "name": "EXTRA SÅS",
+        "description": "Extra choice of sauce"
+      }
     },
     "burgers": {
       "title": "Burgers",
@@ -127,6 +216,24 @@
       }
     }
   },
+  "modal": {
+    "swapProtein": "Swap protein",
+    "pickOne": "choose one",
+    "keepOriginal": "Keep original",
+    "included": "Included",
+    "free": "Free",
+    "removeIngredients": "Remove ingredients",
+    "tapToRemove": "tap to remove",
+    "removalNote": "Green = included · Red = removed",
+    "addSauce": "Add sauce",
+    "sauceLabel": "+Sauce on the side",
+    "sauceNote": "Specify sauce preference in notes below",
+    "addExtras": "Add extras",
+    "instructions": "Notes & allergies",
+    "instructionsPlaceholder": "E.g. no nuts, peanut allergy, preferred sauce...",
+    "total": "Total",
+    "addToCart": "Add to order"
+  },
   "footer": {
     "address": "Alingsåsvägen 40, 504 38 Borås",
     "phone": "0705-937920",
@@ -141,5 +248,16 @@
   "metadata": {
     "title": "Street Dudes Borås — Smash Burgers, Tacos & Bowls",
     "description": "Street Dudes in Borås serves the best smash burgers, crispy tacos, delicious bowls, and fresh sides in town. View our menu and visit us at Alingsåsvägen!"
+  },
+  "cart": {
+    "title": "Your order",
+    "empty": "Your cart is empty",
+    "addToCart": "ADD",
+    "openCart": "Open cart",
+    "close": "Close",
+    "subtotal": "Subtotal",
+    "checkout": "Go to checkout",
+    "itemCount": "items",
+    "viewOrder": "View order"
   }
 }

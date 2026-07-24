@@ -1,26 +1,43 @@
 /**
- * Menu System Type Definitions for Street Dudes.
- * Defines the core schemas for dishes, category collections, and full menus.
+ * Types for the Street Dudes menu system.
+ * Every item has a type that controls where it appears.
  */
 
-export type MenuItemBadge = 'favorite' | 'levelup';
+/** Controls where a menu item appears */
+export type MenuItemType =
+  | 'main'       // Shows on menu with customization modal
+  | 'sauce_dip'  // Shows on menu, goes straight to cart (20kr dip cups)
+  | 'addon'      // Hidden from menu, only appears inside customization modal
 
+/** A protein swap option inside the customization modal */
+export type ProteinSwap = {
+  id: string
+  name: string
+  priceDelta: number  // 0 = free swap, positive = extra cost in kr
+}
+
+/** Customization options available for a menu item */
+export type ItemCustomization = {
+  proteinSwaps: ProteinSwap[]  // Meat alternatives
+  ingredients: string[]         // Removable ingredients
+  addonIds: string[]            // IDs of addon items available for this item
+  hasSauceAddon: boolean        // Whether +Sås +10kr option appears
+}
+
+/** A single item on the menu */
 export type MenuItem = {
-  id: string;
-  nameKey: string; // The localization dot-notation lookup key for the dish name
-  descriptionKey: string; // The localization dot-notation lookup key for the dish description
-  price?: number; // Numeric price in Swedish Krona (SEK)
-  badge?: MenuItemBadge; // Optional promotional highlight tags
-  priceLabelKey?: string; // Optional custom pricing prefix label key (e.g. 2 för)
-  isAddon?: boolean; // Optional indicator that this item is an addon
-};
+  id: string
+  nameKey: string
+  descriptionKey: string
+  price: number
+  type: MenuItemType
+  badge?: 'favorite' | 'levelup'
+  customization: ItemCustomization
+}
 
+/** A category grouping menu items */
 export type MenuCategory = {
-  id: string;
-  labelKey: string; // The localization dot-notation lookup key for the category name
-  items: MenuItem[]; // Collection of menu items falling under this category
-};
-
-export type MenuData = {
-  categories: MenuCategory[]; // The full structured menu data layout
-};
+  id: string
+  labelKey: string
+  items: MenuItem[]
+}
