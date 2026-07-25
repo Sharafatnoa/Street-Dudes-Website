@@ -259,5 +259,44 @@
     "checkout": "Gå till kassan",
     "itemCount": "varor",
     "viewOrder": "Visa beställning"
+  },
+  "checkout": {
+    "title": "Kassa",
+    "back": "Tillbaka",
+    "fulfillment": {
+      "title": "Hur vill du ha din mat?",
+      "delivery": "🛵 Leverans",
+      "pickup": "🏪 Upphämtning"
+    },
+    "address": {
+      "title": "Leveransadress",
+      "gpsButton": "Använd min plats",
+      "gpsLoading": "Hämtar din plats...",
+      "gpsSubtitle": "Automatisk adressfyllning",
+      "placeholder": "Din gatuadress, Borås",
+      "checkButton": "Kontrollera",
+      "or": "eller"
+    },
+    "details": {
+      "title": "Dina uppgifter",
+      "name": "Namn",
+      "nameRequired": "Namn *",
+      "namePlaceholder": "För- och efternamn",
+      "email": "E-post *",
+      "emailPlaceholder": "din@email.com",
+      "phone": "Telefon",
+      "phoneRequired": "Telefon *",
+      "phoneOptional": "Telefon (valfritt)",
+      "phonePlaceholder": "07XX-XXX XXX",
+      "phoneNote": "Leveransföraren kan behöva kontakta dig"
+    },
+    "notes": {
+      "title": "Anteckningar",
+      "placeholder": "Allergier, portkod, övriga önskemål..."
+    },
+    "submit": "Beställ nu",
+    "paymentNote": "Betalning sker vid leverans eller upphämtning",
+    "processing": "Bearbetar..."
   }
 }
+

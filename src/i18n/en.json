@@ -259,5 +259,44 @@
     "checkout": "Go to checkout",
     "itemCount": "items",
     "viewOrder": "View order"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "back": "Back",
+    "fulfillment": {
+      "title": "How would you like your food?",
+      "delivery": "🛵 Delivery",
+      "pickup": "🏪 Pickup"
+    },
+    "address": {
+      "title": "Delivery address",
+      "gpsButton": "Use my location",
+      "gpsLoading": "Getting your location...",
+      "gpsSubtitle": "Automatic address fill",
+      "placeholder": "Your street address, Borås",
+      "checkButton": "Check",
+      "or": "or"
+    },
+    "details": {
+      "title": "Your details",
+      "name": "Name",
+      "nameRequired": "Name *",
+      "namePlaceholder": "First and last name",
+      "email": "Email *",
+      "emailPlaceholder": "your@email.com",
+      "phone": "Phone",
+      "phoneRequired": "Phone *",
+      "phoneOptional": "Phone (optional)",
+      "phonePlaceholder": "07XX-XXX XXX",
+      "phoneNote": "The delivery driver may need to contact you"
+    },
+    "notes": {
+      "title": "Notes",
+      "placeholder": "Allergies, gate code, special requests..."
+    },
+    "submit": "Place order",
+    "paymentNote": "Payment on delivery or pickup",
+    "processing": "Processing..."
   }
 }
+

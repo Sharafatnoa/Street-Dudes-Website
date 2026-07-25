@@ -11,7 +11,7 @@
 'use client'
 
 import { useCart } from '@/context/CartContext'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import CartItem from './CartItem'
 
@@ -23,12 +23,14 @@ type CartDrawerProps = {
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const { cart } = useCart()
   const t = useTranslations()
+  const locale = useLocale()
   const router = useRouter()
 
   function handleCheckout() {
     onClose()
-    router.push('/checkout')
+    router.push(`/${locale}/checkout`)
   }
+
 
   return (
     <>

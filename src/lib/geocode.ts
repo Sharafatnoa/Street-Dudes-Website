@@ -66,3 +66,53 @@ export async function geocodeAddress(
     }
   }
 }
+
+/**
+ * Converts GPS coordinates to a human-readable
+ * street address using Google Maps Reverse Geocoding.
+ * Called when customer uses the GPS location button.
+ * Server-side only — uses GOOGLE_MAPS_GEOCODING_KEY.
+ */
+
+type ReverseGeocodeResult =
+  | { success: true; address: string }
+  | { success: false; error: string }
+
+export async function reverseGeocodeCoordinates(
+  lat: number,
+  lng: number
+): Promise<ReverseGeocodeResult> {
+  const apiKey = process.env.GOOGLE_MAPS_GEOCODING_KEY
+
+  if (!apiKey) {
+    return { success: false, error: 'Geocoding not configured' }
+  }
+
+  const url =
+    `https://maps.googleapis.com/maps/api/geocode/json` +
+    `?latlng=${lat},${lng}&key=${apiKey}&language=sv`
+
+  try {
+    const response = await fetch(url)
+    const data = await response.json()
+
+    if (data.status !== 'OK' || !data.results.length) {
+      return {
+        success: false,
+        error: 'Kunde inte hitta din adress. Ange den manuellt.',
+      }
+    }
+
+    // Use the first result which is the most precise
+    return {
+      success: true,
+      address: data.results[0].formatted_address,
+    }
+  } catch {
+    return {
+      success: false,
+      error: 'Platstjänsten är inte tillgänglig just nu.',
+    }
+  }
+}
+
