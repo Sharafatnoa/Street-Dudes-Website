@@ -1,7 +1,7 @@
 /**
  * The main checkout form.
- * Collects fulfillment type, address (delivery only),
- * customer details, and notes.
+ * Collects fulfillment type, split delivery address,
+ * customer details, delivery instructions, and allergy notes.
  * Submits to POST /api/orders on confirmation.
  */
 
@@ -17,7 +17,7 @@ import type {
   CheckoutFormData,
   DeliveryCheckResult,
 } from '@/types/checkout'
-import { EMPTY_FORM } from '@/types/checkout'
+import { EMPTY_FORM, buildFullAddress } from '@/types/checkout'
 
 export default function CheckoutForm() {
   const { cart, emptyCart } = useCart()
@@ -36,28 +36,12 @@ export default function CheckoutForm() {
 
   const total = cart.subtotal + deliveryFee
 
-  /** Updates a single form field */
+  /** Updates a single string form field */
   function updateField(
     field: keyof CheckoutFormData,
     value: string
   ) {
     setForm(prev => ({ ...prev, [field]: value }))
-  }
-
-  /** Called when delivery validation completes */
-  function handleValidationResult(
-    result: DeliveryCheckResult | null,
-    lat?: number,
-    lng?: number
-  ) {
-    setDeliveryResult(result)
-    if (lat !== undefined && lng !== undefined) {
-      setForm(prev => ({
-        ...prev,
-        deliveryLat: lat,
-        deliveryLng: lng,
-      }))
-    }
   }
 
   /**
@@ -73,16 +57,18 @@ export default function CheckoutForm() {
       return 'Ange en giltig e-postadress'
     }
     if (form.fulfillmentType === 'delivery') {
-      if (!form.deliveryAddress.trim()) {
-        return 'Ange din leveransadress'
+      if (!form.streetAddress.trim()) {
+        return 'Ange din gatuadress'
+      }
+      if (!form.postalCode.trim()) {
+        return 'Ange ditt postnummer'
       }
       if (!deliveryResult?.eligible) {
         return 'Kontrollera leverans till din adress'
       }
-    }
-    if (form.fulfillmentType === 'delivery' &&
-        !form.customerPhone.trim()) {
-      return 'Ange ditt telefonnummer för leverans'
+      if (!form.customerPhone.trim()) {
+        return 'Ange ditt telefonnummer för leverans'
+      }
     }
     return null
   }
@@ -108,12 +94,16 @@ export default function CheckoutForm() {
           customerPhone: form.customerPhone.trim(),
           fulfillmentType: form.fulfillmentType,
           deliveryAddress: form.fulfillmentType === 'delivery'
-            ? form.deliveryAddress.trim()
+            ? buildFullAddress(form)
             : null,
+          deliveryApartment: form.apartment.trim() || null,
+          deliveryPostalCode: form.postalCode.trim() || null,
+          deliveryCity: form.city.trim() || null,
           deliveryLat: form.deliveryLat,
           deliveryLng: form.deliveryLng,
           items: cart.items,
-          notes: form.notes.trim(),
+          deliveryNotes: form.deliveryNotes.trim(),
+          allergyNotes: form.allergyNotes.trim(),
         }),
       })
 
@@ -177,12 +167,17 @@ export default function CheckoutForm() {
             Leveransadress
           </h2>
           <DeliveryAddressInput
-            address={form.deliveryAddress}
+            form={form}
             subtotal={cart.subtotal}
-            onAddressChange={addr =>
-              updateField('deliveryAddress', addr)
-            }
-            onValidationResult={handleValidationResult}
+            onFieldChange={updateField}
+            onCoordinatesChange={(lat, lng) => {
+              setForm(prev => ({
+                ...prev,
+                deliveryLat: lat,
+                deliveryLng: lng,
+              }))
+            }}
+            onValidationResult={setDeliveryResult}
           />
         </section>
       )}
@@ -262,17 +257,20 @@ export default function CheckoutForm() {
         </div>
       </section>
 
-      {/* Section 4 — Notes */}
+      {/* Section 4 — Delivery notes */}
       <section>
         <h2 className="font-display text-white text-lg
-                       uppercase tracking-widest mb-3">
-          Anteckningar
+                       uppercase tracking-widest mb-1">
+          Leveransanteckningar
         </h2>
+        <p className="text-white/30 text-xs mb-3">
+          Instruktioner till leveransföraren
+        </p>
         <textarea
-          value={form.notes}
-          onChange={e => updateField('notes', e.target.value)}
-          placeholder="Allergier, portkod, övriga önskemål..."
-          rows={3}
+          value={form.deliveryNotes}
+          onChange={e => updateField('deliveryNotes', e.target.value)}
+          placeholder="T.ex. Lämna utanför dörren, ring på 1302..."
+          rows={2}
           className="w-full bg-black/40 border border-white/10
                      rounded-sm px-3 py-3 text-sm text-white
                      placeholder:text-white/25 resize-none
@@ -280,7 +278,35 @@ export default function CheckoutForm() {
         />
       </section>
 
-      {/* Summary on mobile — shown here between notes and submit */}
+      {/* Section 5 — Allergy and special requests */}
+      <section>
+        <h2 className="font-display text-white text-lg
+                       uppercase tracking-widest mb-1">
+          Allergier &amp; specialönskemål
+        </h2>
+        <p className="text-white/30 text-xs mb-3">
+          Viktigt för köket att veta
+        </p>
+        <textarea
+          value={form.allergyNotes}
+          onChange={e => updateField('allergyNotes', e.target.value)}
+          placeholder="T.ex. Jordnötsallergi, utan lök..."
+          rows={2}
+          className="w-full bg-black/40 border border-white/10
+                     rounded-sm px-3 py-3 text-sm text-white
+                     placeholder:text-white/25 resize-none
+                     focus:outline-none focus:border-red-500/40"
+        />
+        {form.allergyNotes && (
+          <div className="mt-2 flex items-center gap-2
+                          text-amber-400 text-xs">
+            <span>⚠</span>
+            <span>Allergiinformation skickas till köket</span>
+          </div>
+        )}
+      </section>
+
+      {/* Summary on mobile — shown between notes and submit */}
       <div className="lg:hidden">
         <CheckoutSummary
           deliveryFee={deliveryFee}

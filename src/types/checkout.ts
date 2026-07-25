@@ -10,10 +10,17 @@ export type CheckoutFormData = {
   customerName: string
   customerEmail: string
   customerPhone: string
-  deliveryAddress: string
+  // Split address fields
+  streetAddress: string      // Bohustgatan 12
+  apartment: string          // Lägenhet 1302 (optional)
+  postalCode: string         // 504 35
+  city: string               // Borås (pre-filled)
+  // Coordinates from GPS or validation
   deliveryLat: number | null
   deliveryLng: number | null
-  notes: string
+  // Separate note fields
+  deliveryNotes: string      // Leave at door etc.
+  allergyNotes: string       // Peanut allergy etc.
 }
 
 /** Delivery validation result shown to customer */
@@ -40,8 +47,28 @@ export const EMPTY_FORM: CheckoutFormData = {
   customerName: '',
   customerEmail: '',
   customerPhone: '',
-  deliveryAddress: '',
+  streetAddress: '',
+  apartment: '',
+  postalCode: '',
+  city: 'Borås',
   deliveryLat: null,
   deliveryLng: null,
-  notes: '',
+  deliveryNotes: '',
+  allergyNotes: '',
+}
+
+/**
+ * Builds the full address string from split fields for geocoding.
+ * Filters out empty parts so the geocoder gets a clean query.
+ */
+export function buildFullAddress(
+  form: CheckoutFormData
+): string {
+  const parts = [
+    form.streetAddress,
+    form.apartment,
+    `${form.postalCode} ${form.city}`.trim(),
+    'Sverige',
+  ].filter(Boolean)
+  return parts.join(', ')
 }

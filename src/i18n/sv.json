@@ -272,10 +272,19 @@
       "title": "Leveransadress",
       "gpsButton": "Använd min plats",
       "gpsLoading": "Hämtar din plats...",
-      "gpsSubtitle": "Automatisk adressfyllning",
-      "placeholder": "Din gatuadress, Borås",
-      "checkButton": "Kontrollera",
-      "or": "eller"
+      "gpsSubtitle": "Fyll i adressfälten automatiskt",
+      "streetLabel": "Gatuadress *",
+      "streetPlaceholder": "Bohustgatan 12",
+      "apartmentLabel": "Lägenhet / Våning",
+      "apartmentOptional": "(valfritt)",
+      "apartmentPlaceholder": "Lägenhet 1302, 4 tr",
+      "postalLabel": "Postnummer *",
+      "postalPlaceholder": "504 35",
+      "cityLabel": "Stad",
+      "checkButton": "Kontrollera leverans",
+      "checking": "Kontrollerar...",
+      "mapTitle": "Din leveransplats",
+      "or": "eller fyll i manuellt"
     },
     "details": {
       "title": "Dina uppgifter",
@@ -291,12 +300,18 @@
       "phoneNote": "Leveransföraren kan behöva kontakta dig"
     },
     "notes": {
-      "title": "Anteckningar",
-      "placeholder": "Allergier, portkod, övriga önskemål..."
+      "deliveryTitle": "Leveransanteckningar",
+      "deliverySubtitle": "Instruktioner till leveransföraren",
+      "deliveryPlaceholder": "T.ex. Lämna utanför dörren, ring på 1302...",
+      "allergyTitle": "Allergier & specialönskemål",
+      "allergySubtitle": "Viktigt för köket att veta",
+      "allergyPlaceholder": "T.ex. Jordnötsallergi, utan lök...",
+      "allergyWarning": "Allergiinformation skickas till köket"
     },
     "submit": "Beställ nu",
     "paymentNote": "Betalning sker vid leverans eller upphämtning",
     "processing": "Bearbetar..."
   }
 }
+
 

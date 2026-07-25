@@ -26,13 +26,17 @@ export type Order = {
   customerPhone: string
   fulfillmentType: 'delivery' | 'pickup'
   deliveryAddress: string | null
+  deliveryApartment: string | null
+  deliveryPostalCode: string | null
+  deliveryCity: string | null
   deliveryLat: number | null
   deliveryLng: number | null
   items: OrderItem[]
   subtotal: number
   deliveryFee: number
   total: number
-  notes: string | null
+  deliveryNotes: string | null
+  allergyNotes: string | null
 }
 
 /** Input shape when creating a new order */

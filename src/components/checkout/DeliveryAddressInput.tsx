@@ -1,64 +1,78 @@
 /**
  * Address input for delivery orders.
- * Two methods:
- * 1. GPS button — browser gets location, 
- *    API reverse geocodes to address
- * 2. Manual text input
  *
- * After address is set (either way), delivery
- * validation runs automatically against the API.
+ * Two entry methods:
+ * 1. GPS button — browser gets location, API reverse geocodes
+ *    to fill all address fields automatically.
+ * 2. Manual split fields — street, apartment, postal code, city.
+ *
+ * After address is confirmed, delivery validation runs against
+ * the API and a live map preview appears on success.
+ *
+ * @param form - Full form state, used to read address fields.
+ * @param onFieldChange - Updates a single form field.
+ * @param onCoordinatesChange - Called with lat/lng from GPS.
+ * @param onValidationResult - Passes delivery check result up.
+ * @param subtotal - Current cart subtotal for fee calculation.
  */
 
 'use client'
 
 import { useState } from 'react'
-import type { DeliveryCheckResult } from '@/types/checkout'
+import type {
+  CheckoutFormData,
+  DeliveryCheckResult,
+} from '@/types/checkout'
+import { buildFullAddress } from '@/types/checkout'
 
 type DeliveryAddressInputProps = {
-  address: string
-  subtotal: number
-  onAddressChange: (address: string) => void
-  onValidationResult: (
-    result: DeliveryCheckResult | null,
-    lat?: number,
-    lng?: number
+  form: CheckoutFormData
+  onFieldChange: (
+    field: keyof CheckoutFormData,
+    value: string
   ) => void
+  onCoordinatesChange: (lat: number, lng: number) => void
+  onValidationResult: (result: DeliveryCheckResult | null) => void
+  subtotal: number
 }
 
 type GpsState = 'idle' | 'loading' | 'success' | 'error'
 
 export default function DeliveryAddressInput({
-  address,
-  subtotal,
-  onAddressChange,
+  form,
+  onFieldChange,
+  onCoordinatesChange,
   onValidationResult,
+  subtotal,
 }: DeliveryAddressInputProps) {
   const [gpsState, setGpsState] = useState<GpsState>('idle')
   const [gpsError, setGpsError] = useState('')
   const [validating, setValidating] = useState(false)
   const [validationResult, setValidationResult] =
     useState<DeliveryCheckResult | null>(null)
+  const [mapCoords, setMapCoords] = useState<{
+    lat: number
+    lng: number
+  } | null>(null)
+
+  const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY
 
   /**
-   * Gets the device GPS location and reverse geocodes
-   * it to a street address via our API.
-   * Only works on HTTPS or localhost.
+   * Gets GPS location and reverse geocodes to
+   * fill in the address fields automatically.
    */
   async function handleUseLocation() {
     if (!navigator.geolocation) {
       setGpsError('Din enhet stöder inte platstjänster.')
       return
     }
-
     setGpsState('loading')
     setGpsError('')
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords
-
         try {
-          // Reverse geocode the coordinates server-side
           const response = await fetch('/api/geocode/reverse', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -67,32 +81,46 @@ export default function DeliveryAddressInput({
               lng: longitude,
             }),
           })
-
           const data = await response.json()
+          if (!response.ok) throw new Error(data.error)
 
-          if (!response.ok) {
-            throw new Error(data.error)
+          // Parse the returned address into fields.
+          // Google returns: "Street Nr, PostalCode City, Country"
+          const parts = data.address.split(',').map(
+            (s: string) => s.trim()
+          )
+          if (parts[0]) onFieldChange('streetAddress', parts[0])
+          if (parts[1]) {
+            // Extract postal code (5 digits with optional space) and city
+            const match = parts[1].match(/(\d{3}\s?\d{2})\s+(.+)/)
+            if (match) {
+              onFieldChange('postalCode', match[1])
+              onFieldChange('city', match[2])
+            }
           }
 
           setGpsState('success')
-          onAddressChange(data.address)
+          onCoordinatesChange(latitude, longitude)
+          setMapCoords({ lat: latitude, lng: longitude })
 
-          // Auto-validate delivery with the GPS coordinates
+          // Auto-validate with the GPS coordinates we already have
           await validateDelivery(
             data.address,
+            subtotal,
             latitude,
             longitude
           )
-        } catch (error) {
+        } catch {
           setGpsState('error')
           setGpsError('Kunde inte hämta din adress.')
         }
       },
       (error) => {
         setGpsState('error')
+        // PERMISSION_DENIED is the only case with a user-actionable message
         if (error.code === error.PERMISSION_DENIED) {
           setGpsError(
-            'Platstillstånd nekades. Ange adressen manuellt.'
+            'Platstillstånd nekades. Fyll i adressen manuellt.'
           )
         } else {
           setGpsError('Kunde inte hämta din plats.')
@@ -103,16 +131,16 @@ export default function DeliveryAddressInput({
   }
 
   /**
-   * Validates the address against the delivery radius API.
-   * Called after GPS success or when manual address is submitted.
+   * Validates the full address against the delivery radius API.
+   * Called after GPS success or when the customer clicks Kontrollera.
    */
   async function validateDelivery(
-    addressToValidate: string,
+    fullAddress: string,
+    orderSubtotal: number,
     lat?: number,
     lng?: number
   ) {
-    if (!addressToValidate.trim()) return
-
+    if (!fullAddress.trim()) return
     setValidating(true)
     setValidationResult(null)
     onValidationResult(null)
@@ -122,29 +150,43 @@ export default function DeliveryAddressInput({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          address: addressToValidate,
-          subtotal,
+          address: fullAddress,
+          subtotal: orderSubtotal,
         }),
       })
-
       const result: DeliveryCheckResult = await response.json()
       setValidationResult(result)
-      onValidationResult(result, lat, lng)
+      onValidationResult(result)
+
+      // Show map pin only after a successful validation
+      if (result.eligible && lat && lng) {
+        setMapCoords({ lat, lng })
+        onCoordinatesChange(lat, lng)
+      }
     } catch {
       setValidationResult({
         eligible: false,
         distanceKm: 0,
         deliveryFee: 0,
         isFreeDelivery: false,
-        message: 'Kunde inte kontrollera leverans. Försök igen.',
+        message: 'Kunde inte kontrollera leverans.',
       })
     } finally {
       setValidating(false)
     }
   }
 
+  function handleCheckDelivery() {
+    const fullAddress = buildFullAddress(form)
+    validateDelivery(fullAddress, subtotal)
+  }
+
+  const canCheck =
+    form.streetAddress.trim().length > 0 &&
+    form.postalCode.trim().length > 0
+
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
 
       {/* GPS button */}
       <button
@@ -154,12 +196,11 @@ export default function DeliveryAddressInput({
         className="flex items-center gap-3 px-4 py-3
                    border border-brand-gold/30 rounded-sm
                    text-brand-gold/80 text-sm
-                   hover:border-brand-gold/60
-                   hover:text-brand-gold
+                   hover:border-brand-gold/60 hover:text-brand-gold
                    transition-colors disabled:opacity-50
                    disabled:cursor-not-allowed"
       >
-        <span className="text-lg">
+        <span className="text-xl">
           {gpsState === 'loading' ? '⏳' : '📍'}
         </span>
         <div className="text-left">
@@ -169,9 +210,9 @@ export default function DeliveryAddressInput({
               ? 'Hämtar din plats...'
               : 'Använd min plats'}
           </p>
-          <p className="text-xs text-white/30 mt-0.5 normal-case
-                        tracking-normal font-body">
-            Automatisk adressfyllning
+          <p className="text-xs text-white/30 mt-0.5
+                        normal-case tracking-normal font-body">
+            Fyll i adressfälten automatiskt
           </p>
         </div>
       </button>
@@ -183,38 +224,119 @@ export default function DeliveryAddressInput({
       {/* Divider */}
       <div className="flex items-center gap-3">
         <div className="flex-1 h-px bg-white/10" />
-        <span className="text-white/25 text-xs">eller</span>
+        <span className="text-white/25 text-xs">
+          eller fyll i manuellt
+        </span>
         <div className="flex-1 h-px bg-white/10" />
       </div>
 
-      {/* Manual address input */}
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={address}
-          onChange={e => {
-            onAddressChange(e.target.value)
-            setValidationResult(null)
-            onValidationResult(null)
-          }}
-          placeholder="Din gatuadress, Borås"
-          className="flex-1 bg-black/40 border border-white/10
-                     rounded-sm px-3 py-3 text-sm text-white
-                     placeholder:text-white/25
-                     focus:outline-none focus:border-brand-gold/40"
-        />
+      {/* Split address fields */}
+      <div className="flex flex-col gap-3">
+
+        {/* Street address */}
+        <div>
+          <label className="text-xs text-white/40 uppercase
+                            tracking-widest mb-1.5 block">
+            Gatuadress *
+          </label>
+          <input
+            type="text"
+            value={form.streetAddress}
+            onChange={e => {
+              onFieldChange('streetAddress', e.target.value)
+              setValidationResult(null)
+              onValidationResult(null)
+              setMapCoords(null)
+            }}
+            placeholder="Bohustgatan 12"
+            autoComplete="street-address"
+            className="w-full bg-black/40 border border-white/10
+                       rounded-sm px-3 py-3 text-sm text-white
+                       placeholder:text-white/25
+                       focus:outline-none focus:border-brand-gold/40"
+          />
+        </div>
+
+        {/* Apartment / floor — optional */}
+        <div>
+          <label className="text-xs text-white/40 uppercase
+                            tracking-widest mb-1.5 block">
+            Lägenhet / Våning
+            <span className="text-white/20 normal-case
+                             tracking-normal ml-1">(valfritt)</span>
+          </label>
+          <input
+            type="text"
+            value={form.apartment}
+            onChange={e => onFieldChange('apartment', e.target.value)}
+            placeholder="Lägenhet 1302, 4 tr"
+            autoComplete="address-line2"
+            className="w-full bg-black/40 border border-white/10
+                       rounded-sm px-3 py-3 text-sm text-white
+                       placeholder:text-white/25
+                       focus:outline-none focus:border-brand-gold/40"
+          />
+        </div>
+
+        {/* Postal code + city on same row */}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs text-white/40 uppercase
+                              tracking-widest mb-1.5 block">
+              Postnummer *
+            </label>
+            <input
+              type="text"
+              value={form.postalCode}
+              onChange={e => {
+                onFieldChange('postalCode', e.target.value)
+                setValidationResult(null)
+                onValidationResult(null)
+                setMapCoords(null)
+              }}
+              placeholder="504 35"
+              autoComplete="postal-code"
+              inputMode="numeric"
+              maxLength={6}
+              className="w-full bg-black/40 border border-white/10
+                         rounded-sm px-3 py-3 text-sm text-white
+                         placeholder:text-white/25
+                         focus:outline-none focus:border-brand-gold/40"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-white/40 uppercase
+                              tracking-widest mb-1.5 block">
+              Stad
+            </label>
+            <input
+              type="text"
+              value={form.city}
+              onChange={e => onFieldChange('city', e.target.value)}
+              placeholder="Borås"
+              autoComplete="address-level2"
+              className="w-full bg-black/40 border border-white/10
+                         rounded-sm px-3 py-3 text-sm text-white
+                         placeholder:text-white/25
+                         focus:outline-none focus:border-brand-gold/40"
+            />
+          </div>
+        </div>
+
+        {/* Check delivery button */}
         <button
           type="button"
-          onClick={() => validateDelivery(address)}
-          disabled={!address.trim() || validating}
-          className="px-4 py-3 bg-brand-gold/10 text-brand-gold
-                     border border-brand-gold/30 rounded-sm
-                     text-sm font-display uppercase tracking-wide
-                     hover:bg-brand-gold/20 transition-colors
-                     disabled:opacity-40 disabled:cursor-not-allowed
-                     whitespace-nowrap"
+          onClick={handleCheckDelivery}
+          disabled={!canCheck || validating}
+          className="w-full py-3 border border-brand-gold/30
+                     text-brand-gold font-display text-sm
+                     uppercase tracking-widest rounded-sm
+                     hover:bg-brand-gold/10 transition-colors
+                     disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          {validating ? '...' : 'Kontrollera'}
+          {validating
+            ? 'Kontrollerar...'
+            : 'Kontrollera leverans'}
         </button>
       </div>
 
@@ -226,7 +348,9 @@ export default function DeliveryAddressInput({
                            ? 'bg-green-500/10 border border-green-500/20'
                            : 'bg-red-500/10 border border-red-500/20'
                          }`}>
-          <span>{validationResult.eligible ? '✓' : '✕'}</span>
+          <span className="shrink-0">
+            {validationResult.eligible ? '✓' : '✕'}
+          </span>
           <div>
             <p className={validationResult.eligible
               ? 'text-green-400'
@@ -234,12 +358,41 @@ export default function DeliveryAddressInput({
               {validationResult.message}
             </p>
             {validationResult.eligible &&
-             validationResult.isFreeDelivery && (
-              <p className="text-green-300/70 text-xs mt-0.5">
-                Gratis leverans på din beställning!
+             !validationResult.isFreeDelivery && (
+              <p className="text-white/40 text-xs mt-0.5">
+                Avstånd: {validationResult.distanceKm} km
               </p>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Live map preview — shown after successful validation */}
+      {mapCoords && validationResult?.eligible && MAPS_KEY && (
+        <div className="rounded-sm overflow-hidden
+                        border border-white/10">
+          <div className="px-3 py-2 bg-white/5 flex items-center
+                          gap-2 border-b border-white/10">
+            <span className="text-xs text-white/40 uppercase
+                             tracking-widest">
+              📍 Din leveransplats
+            </span>
+          </div>
+          <iframe
+            title="Din leveransadress på kartan"
+            width="100%"
+            height="200"
+            style={{ border: 0 }}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            src={
+              `https://www.google.com/maps/embed/v1/place` +
+              `?key=${MAPS_KEY}` +
+              `&q=${mapCoords.lat},${mapCoords.lng}` +
+              `&center=${mapCoords.lat},${mapCoords.lng}` +
+              `&zoom=17`
+            }
+          />
         </div>
       )}
     </div>

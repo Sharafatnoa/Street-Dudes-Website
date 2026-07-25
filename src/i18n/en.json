@@ -272,10 +272,19 @@
       "title": "Delivery address",
       "gpsButton": "Use my location",
       "gpsLoading": "Getting your location...",
-      "gpsSubtitle": "Automatic address fill",
-      "placeholder": "Your street address, Borås",
-      "checkButton": "Check",
-      "or": "or"
+      "gpsSubtitle": "Auto-fill address fields",
+      "streetLabel": "Street address *",
+      "streetPlaceholder": "Bohustgatan 12",
+      "apartmentLabel": "Apartment / Floor",
+      "apartmentOptional": "(optional)",
+      "apartmentPlaceholder": "Apartment 1302, 4th floor",
+      "postalLabel": "Postal code *",
+      "postalPlaceholder": "504 35",
+      "cityLabel": "City",
+      "checkButton": "Check delivery",
+      "checking": "Checking...",
+      "mapTitle": "Your delivery location",
+      "or": "or fill in manually"
     },
     "details": {
       "title": "Your details",
@@ -291,12 +300,18 @@
       "phoneNote": "The delivery driver may need to contact you"
     },
     "notes": {
-      "title": "Notes",
-      "placeholder": "Allergies, gate code, special requests..."
+      "deliveryTitle": "Delivery notes",
+      "deliverySubtitle": "Instructions for the delivery driver",
+      "deliveryPlaceholder": "E.g. Leave outside door, buzz 1302...",
+      "allergyTitle": "Allergies & special requests",
+      "allergySubtitle": "Important for the kitchen to know",
+      "allergyPlaceholder": "E.g. Peanut allergy, no onion...",
+      "allergyWarning": "Allergy info will be sent to the kitchen"
     },
     "submit": "Place order",
     "paymentNote": "Payment on delivery or pickup",
     "processing": "Processing..."
   }
 }
+
 
