@@ -12,6 +12,7 @@
  * which is UTC+1 in winter and UTC+2 in summer.
  */
 
+import { getDay, getHours, getMinutes } from 'date-fns'
 import { toZonedTime } from 'date-fns-tz'
 import type { AppConfig } from '@/types/config'
 
@@ -57,7 +58,9 @@ function formatTime(time: string): string {
  * Uses Stockholm local time.
  */
 function isWeekend(stockholmDate: Date): boolean {
-  const day = stockholmDate.getDay()
+  // Use date-fns getDay — reads the shifted internal value from toZonedTime
+  // correctly instead of the system-local day from Date.prototype.getDay()
+  const day = getDay(stockholmDate)
   return day === 0 || day === 6 // 0 = Sunday, 6 = Saturday
 }
 
@@ -65,7 +68,8 @@ function isWeekend(stockholmDate: Date): boolean {
  * Gets the current time in Stockholm as total minutes since midnight.
  */
 function getCurrentMinutes(stockholmDate: Date): number {
-  return stockholmDate.getHours() * 60 + stockholmDate.getMinutes()
+  // Same reason as isWeekend — use date-fns helpers to read Stockholm local time
+  return getHours(stockholmDate) * 60 + getMinutes(stockholmDate)
 }
 
 /**
