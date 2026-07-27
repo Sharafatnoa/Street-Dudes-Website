@@ -110,17 +110,20 @@ export default function CheckoutForm() {
       const data = await response.json()
 
       if (!response.ok) {
-        setSubmitError(data.error || 'Något gick fel.')
+        // Surface the specific error from the API (restaurant closed,
+        // outside radius, etc.) rather than a generic message
+        setSubmitError(data.error || 'Något gick fel. Försök igen.')
         return
       }
 
-      // Clear cart and redirect to confirmation
+      // Clear cart and redirect to confirmation page
       emptyCart()
-      router.push(`/${locale}/order/${data.orderNumber}`)
+      router.push(`/${locale}/order-confirmation/${data.orderNumber}`)
 
     } catch {
+      // Only hits here if the network request itself failed
       setSubmitError(
-        'Kunde inte skicka beställningen. Försök igen.'
+        'Kunde inte nå servern. Kontrollera din internetanslutning och försök igen.'
       )
     } finally {
       setSubmitting(false)

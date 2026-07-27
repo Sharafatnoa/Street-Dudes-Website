@@ -23,6 +23,7 @@ export type Order = {
   updatedAt: string
   status: OrderStatus
   customerName: string
+  customerEmail: string
   customerPhone: string
   fulfillmentType: 'delivery' | 'pickup'
   deliveryAddress: string | null
