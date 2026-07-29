@@ -24,6 +24,11 @@ import { getConfig } from '@/lib/getConfig'
 import { isAcceptingOrders, getRestaurantStatus } from '@/lib/openingHours'
 import type { DeliveryValidation } from '@/types/delivery'
 
+// Delivery radius and fee come from Supabase config (via getConfig).
+// force-dynamic prevents Next.js from caching the underlying fetch(),
+// ensuring config changes (radius, fee, threshold) reflect immediately.
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()

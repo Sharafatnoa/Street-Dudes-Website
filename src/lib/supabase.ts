@@ -20,6 +20,6 @@ export const publicClient = createClient(supabaseUrl, supabaseAnonKey)
 
 // Server client — for writing orders and updating status
 // Only import this in API routes
-export function getServerClient() {
-  return createClient(supabaseUrl, supabaseServiceKey)
+export function getServerClient(options?: Parameters<typeof createClient>[2]) {
+  return createClient(supabaseUrl, supabaseServiceKey, options)
 }

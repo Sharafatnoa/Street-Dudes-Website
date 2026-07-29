@@ -23,6 +23,12 @@ import { getServerClient } from '@/lib/supabase'
 import { menuCategories } from '@/data/menu'
 import type { CartItem } from '@/types/order'
 
+// getConfig() must always reflect the latest Supabase values so that
+// opening hours, delivery radius, and fee changes take effect immediately.
+// Without force-dynamic, Next.js caches the underlying fetch() across requests.
+export const dynamic = 'force-dynamic'
+
+
 // ── Types ────────────────────────────────────────────────────────────────────
 
 type OrderRequestBody = {

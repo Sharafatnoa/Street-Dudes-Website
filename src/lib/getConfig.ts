@@ -11,7 +11,15 @@ import { getServerClient } from '@/lib/supabase'
 import type { AppConfig } from '@/types/config'
 
 export async function getConfig(): Promise<AppConfig> {
-  const supabase = getServerClient()
+  // The Supabase JS client uses fetch() without a cache option, which causes
+  // Next.js 14 to apply force-cache by default — persisting the result across
+  // all requests until the server restarts. Passing { cache: 'no-store' } via
+  // the global option bypasses the Next.js Data Cache so config changes in
+  // Supabase (opening hours, delivery radius, pause state, etc.) take effect
+  // on the very next request without a server restart.
+  const supabase = getServerClient({
+    global: { fetch: (url, opts) => fetch(url, { ...opts, cache: 'no-store' }) },
+  })
 
   const { data, error } = await supabase
     .from('config')

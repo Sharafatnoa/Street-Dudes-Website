@@ -17,6 +17,15 @@ import { getConfig } from '@/lib/getConfig'
 import { getRestaurantStatus } from '@/lib/openingHours'
 import { getServerClient } from '@/lib/supabase'
 
+// Forces this route to re-execute on every request instead
+// of being cached by Next.js's default fetch caching layer.
+// Without this, the Supabase client's underlying fetch()
+// call gets cached, and config changes made in Supabase
+// (opening hours, delivery fee, pause state, etc.) never
+// reflect until the server restarts — even though getConfig()
+// itself queries Supabase fresh on every call.
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const [config, supabase] = await Promise.all([
