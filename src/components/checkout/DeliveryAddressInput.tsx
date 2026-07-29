@@ -47,6 +47,7 @@ export default function DeliveryAddressInput({
 }: DeliveryAddressInputProps) {
   const [gpsState, setGpsState] = useState<GpsState>('idle')
   const [gpsError, setGpsError] = useState('')
+  const [gpsImprecise, setGpsImprecise] = useState(false)
   const [validating, setValidating] = useState(false)
   const [validationResult, setValidationResult] =
     useState<DeliveryCheckResult | null>(null)
@@ -58,8 +59,8 @@ export default function DeliveryAddressInput({
   const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY
 
   /**
-   * Gets GPS location and reverse geocodes to
-   * fill in the address fields automatically.
+   * Gets GPS location and calls the reverse geocode API
+   * which returns structured address fields (not a formatted string).
    */
   async function handleUseLocation() {
     if (!navigator.geolocation) {
@@ -68,6 +69,7 @@ export default function DeliveryAddressInput({
     }
     setGpsState('loading')
     setGpsError('')
+    setGpsImprecise(false)
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
@@ -76,40 +78,39 @@ export default function DeliveryAddressInput({
           const response = await fetch('/api/geocode/reverse', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              lat: latitude,
-              lng: longitude,
-            }),
+            body: JSON.stringify({ lat: latitude, lng: longitude }),
           })
           const data = await response.json()
           if (!response.ok) throw new Error(data.error)
 
-          // Parse the returned address into fields.
-          // Google returns: "Street Nr, PostalCode City, Country"
-          const parts = data.address.split(',').map(
-            (s: string) => s.trim()
-          )
-          if (parts[0]) onFieldChange('streetAddress', parts[0])
-          if (parts[1]) {
-            // Extract postal code (5 digits with optional space) and city
-            const match = parts[1].match(/(\d{3}\s?\d{2})\s+(.+)/)
-            if (match) {
-              onFieldChange('postalCode', match[1])
-              onFieldChange('city', match[2])
-            }
+          if (data.imprecise) {
+            // Google only resolved an approximate area (Plus Code etc.).
+            // Leave fields empty; show a neutral prompt to fill manually.
+            setGpsState('success')
+            setGpsImprecise(true)
+            return
           }
+
+          // Fill only the fields that were resolved; leave the rest for the
+          // customer to complete (e.g. postalCode or city may be missing)
+          if (data.streetAddress) onFieldChange('streetAddress', data.streetAddress)
+          if (data.postalCode)   onFieldChange('postalCode',   data.postalCode)
+          if (data.city)         onFieldChange('city',         data.city)
 
           setGpsState('success')
           onCoordinatesChange(latitude, longitude)
           setMapCoords({ lat: latitude, lng: longitude })
 
-          // Auto-validate with the GPS coordinates we already have
-          await validateDelivery(
-            data.address,
-            subtotal,
-            latitude,
-            longitude
-          )
+          // Auto-validate using the resolved address string
+          const resolvedAddress = [
+            data.streetAddress,
+            data.postalCode && data.city
+              ? `${data.postalCode} ${data.city}`
+              : data.city || data.postalCode,
+            'Sverige',
+          ].filter(Boolean).join(', ')
+
+          await validateDelivery(resolvedAddress, subtotal, latitude, longitude)
         } catch {
           setGpsState('error')
           setGpsError('Kunde inte hämta din adress.')
@@ -219,6 +220,11 @@ export default function DeliveryAddressInput({
 
       {gpsError && (
         <p className="text-red-400 text-xs">{gpsError}</p>
+      )}
+      {gpsImprecise && !gpsError && (
+        <p className="text-white/40 text-xs">
+          Kunde inte hitta en exakt adress. Vänligen fyll i adressen manuellt.
+        </p>
       )}
 
       {/* Divider */}

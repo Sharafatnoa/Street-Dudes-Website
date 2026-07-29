@@ -284,7 +284,8 @@
       "checkButton": "Kontrollera leverans",
       "checking": "Kontrollerar...",
       "mapTitle": "Din leveransplats",
-      "or": "eller fyll i manuellt"
+      "or": "eller fyll i manuellt",
+      "gpsImprecise": "Kunde inte hitta en exakt adress. Vänligen fyll i adressen manuellt."
     },
     "details": {
       "title": "Dina uppgifter",

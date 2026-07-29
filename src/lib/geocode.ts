@@ -74,8 +74,54 @@ export async function geocodeAddress(
  * Server-side only — uses GOOGLE_MAPS_GEOCODING_KEY.
  */
 
+/** Structured address fields parsed from Google address_components */
+export type ParsedAddress = {
+  streetAddress: string    // route + street_number, e.g. "Bohustgatan 12"
+  postalCode: string       // postal_code, e.g. "504 35"
+  city: string             // postal_town or locality, e.g. "Borås"
+  imprecise: boolean       // true when route is missing (Plus Code / area only)
+}
+
+/** A single entry from Google's address_components array */
+type AddressComponent = {
+  long_name: string
+  short_name: string
+  types: string[]
+}
+
+/**
+ * Parses Google Geocoding API address_components into structured fields.
+ * Exported for unit testing — contains no I/O.
+ *
+ * Returns imprecise=true if the result has no route (e.g. Plus Code),
+ * which tells the client to skip autofill and show a helpful message.
+ */
+export function parseAddressComponents(
+  components: AddressComponent[]
+): ParsedAddress {
+  const find = (type: string) =>
+    components.find(c => c.types.includes(type))?.long_name ?? ''
+
+  const route       = find('route')
+  const streetNo    = find('street_number')
+  const postalCode  = find('postal_code')
+  // Sweden uses postal_town; locality is a fallback for other regions
+  const city        = find('postal_town') || find('locality')
+
+  // Without a route we only have an approximate area — do not autofill
+  if (!route) {
+    return { streetAddress: '', postalCode: '', city: '', imprecise: true }
+  }
+
+  const streetAddress = streetNo
+    ? `${route} ${streetNo}`
+    : route
+
+  return { streetAddress, postalCode, city, imprecise: false }
+}
+
 type ReverseGeocodeResult =
-  | { success: true; address: string }
+  | { success: true; parsed: ParsedAddress }
   | { success: false; error: string }
 
 export async function reverseGeocodeCoordinates(
@@ -103,11 +149,13 @@ export async function reverseGeocodeCoordinates(
       }
     }
 
-    // Use the first result which is the most precise
-    return {
-      success: true,
-      address: data.results[0].formatted_address,
-    }
+    // Parse structured components — never use formatted_address
+    // because Google may return a Plus Code there for imprecise results
+    const parsed = parseAddressComponents(
+      data.results[0].address_components ?? []
+    )
+
+    return { success: true, parsed }
   } catch {
     return {
       success: false,

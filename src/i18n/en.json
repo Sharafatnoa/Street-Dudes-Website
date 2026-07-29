@@ -284,8 +284,10 @@
       "checkButton": "Check delivery",
       "checking": "Checking...",
       "mapTitle": "Your delivery location",
-      "or": "or fill in manually"
+      "or": "or fill in manually",
+      "gpsImprecise": "Couldn't find an exact address. Please fill in the address manually."
     },
+
     "details": {
       "title": "Your details",
       "name": "Name",

@@ -1,12 +1,14 @@
 /**
  * POST /api/geocode/reverse
  *
- * Converts GPS coordinates to a street address.
+ * Converts GPS coordinates to structured address fields.
  * Called when customer taps "Use my location".
  * Server-side so the geocoding key stays secret.
  *
  * Request body: { lat: number, lng: number }
- * Response: { address: string } or { error: string }
+ * Response: { streetAddress, postalCode, city, imprecise }
+ *   imprecise: true when Google could only resolve a Plus Code /
+ *   approximate area — the client should prompt manual entry.
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -32,7 +34,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    return NextResponse.json({ address: result.address })
+    // Return parsed fields directly — client uses them without further parsing
+    return NextResponse.json(result.parsed)
   } catch (error) {
     console.error('Reverse geocode error:', error)
     return NextResponse.json(
