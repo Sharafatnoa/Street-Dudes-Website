@@ -34,7 +34,7 @@ export default function CheckoutSummary({
         className="font-display text-brand-gold text-lg
                      uppercase tracking-widest mb-4"
       >
-        {t('cart.title')}
+        {t('checkout.summary.title')}
       </h2>
 
       {/* Item list */}
@@ -95,7 +95,7 @@ export default function CheckoutSummary({
                       border-t border-white/10"
       >
         <div className="flex justify-between text-sm">
-          <span className="text-white/50">{t('cart.subtotal')}</span>
+          <span className="text-white/50">{t('checkout.summary.subtotal')}</span>
           <span className="text-white">{cart.subtotal} kr</span>
         </div>
 
@@ -116,7 +116,7 @@ export default function CheckoutSummary({
             className="font-display text-white uppercase
                            tracking-wide"
           >
-            {t('modal.total')}
+            {t('checkout.summary.total')}
           </span>
           <span className="font-display text-brand-gold text-2xl">{total} kr</span>
         </div>

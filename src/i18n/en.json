@@ -263,6 +263,11 @@
   "checkout": {
     "title": "Checkout",
     "back": "Back",
+    "summary": {
+      "title": "Your order",
+      "subtotal": "Subtotal",
+      "total": "Total"
+    },
     "fulfillment": {
       "title": "How would you like your food?",
       "delivery": "🛵 Delivery",

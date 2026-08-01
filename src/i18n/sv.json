@@ -263,6 +263,11 @@
   "checkout": {
     "title": "Kassa",
     "back": "Tillbaka",
+    "summary": {
+      "title": "Din beställning",
+      "subtotal": "Delsumma",
+      "total": "Totalt"
+    },
     "fulfillment": {
       "title": "Hur vill du ha din mat?",
       "delivery": "🛵 Leverans",
