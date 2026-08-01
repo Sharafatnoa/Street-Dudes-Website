@@ -3,10 +3,10 @@
  * No React, no side effects — easy to unit test.
  */
 
-import type { Cart, CartItem, AddToCartInput } from '@/types/order'
-import { EMPTY_CART } from '@/types/order'
+import type { Cart, CartItem, AddToCartInput } from '@/types/order';
+import { EMPTY_CART } from '@/types/order';
 
-const SAUCE_ADDON_PRICE = 10 // kr
+const SAUCE_ADDON_PRICE = 10; // kr
 
 /**
  * Calculates the total price for one cart item
@@ -16,11 +16,11 @@ export function calculateItemTotalPrice(
   basePrice: number,
   proteinSwapDelta: number,
   addedSauce: boolean,
-  addonPrices: number[]
+  addonPrices: number[],
 ): number {
-  const saucePrice = addedSauce ? SAUCE_ADDON_PRICE : 0
-  const addonsTotal = addonPrices.reduce((sum, price) => sum + price, 0)
-  return basePrice + proteinSwapDelta + saucePrice + addonsTotal
+  const saucePrice = addedSauce ? SAUCE_ADDON_PRICE : 0;
+  const addonsTotal = addonPrices.reduce((sum, price) => sum + price, 0);
+  return basePrice + proteinSwapDelta + saucePrice + addonsTotal;
 }
 
 /**
@@ -30,15 +30,15 @@ export function calculateItemTotalPrice(
  * customizations appear as separate entries.
  */
 export function addItemToCart(cart: Cart, input: AddToCartInput): Cart {
-  const proteinDelta = input.proteinSwap?.priceDelta ?? 0
-  const addonPrices = input.addons.map(a => a.price)
+  const proteinDelta = input.proteinSwap?.priceDelta ?? 0;
+  const addonPrices = input.addons.map((a) => a.price);
 
   const totalPrice = calculateItemTotalPrice(
     input.basePrice,
     proteinDelta,
     input.addedSauce,
-    addonPrices
-  )
+    addonPrices,
+  );
 
   const newItem: CartItem = {
     cartItemId: `${input.menuItemId}-${Date.now()}`,
@@ -52,9 +52,9 @@ export function addItemToCart(cart: Cart, input: AddToCartInput): Cart {
     specialInstructions: input.specialInstructions,
     totalPrice,
     quantity: 1,
-  }
+  };
 
-  return recalculateCart([...cart.items, newItem])
+  return recalculateCart([...cart.items, newItem]);
 }
 
 /**
@@ -65,14 +65,12 @@ export function addSimpleItemToCart(
   cart: Cart,
   menuItemId: string,
   name: string,
-  price: number
+  price: number,
 ): Cart {
-  const existing = cart.items.find(
-    i => i.menuItemId === menuItemId && i.addons.length === 0
-  )
+  const existing = cart.items.find((i) => i.menuItemId === menuItemId && i.addons.length === 0);
 
   if (existing) {
-    return updateItemQuantity(cart, existing.cartItemId, existing.quantity + 1)
+    return updateItemQuantity(cart, existing.cartItemId, existing.quantity + 1);
   }
 
   const newItem: CartItem = {
@@ -87,35 +85,31 @@ export function addSimpleItemToCart(
     specialInstructions: '',
     totalPrice: price,
     quantity: 1,
-  }
+  };
 
-  return recalculateCart([...cart.items, newItem])
+  return recalculateCart([...cart.items, newItem]);
 }
 
 /**
  * Removes a cart entry by its unique cartItemId.
  */
 export function removeItemFromCart(cart: Cart, cartItemId: string): Cart {
-  const updatedItems = cart.items.filter(i => i.cartItemId !== cartItemId)
-  return recalculateCart(updatedItems)
+  const updatedItems = cart.items.filter((i) => i.cartItemId !== cartItemId);
+  return recalculateCart(updatedItems);
 }
 
 /**
  * Updates the quantity of a cart entry.
  * Removes the entry if quantity reaches 0.
  */
-export function updateItemQuantity(
-  cart: Cart,
-  cartItemId: string,
-  quantity: number
-): Cart {
+export function updateItemQuantity(cart: Cart, cartItemId: string, quantity: number): Cart {
   if (quantity <= 0) {
-    return removeItemFromCart(cart, cartItemId)
+    return removeItemFromCart(cart, cartItemId);
   }
-  const updatedItems = cart.items.map(i =>
-    i.cartItemId === cartItemId ? { ...i, quantity } : i
-  )
-  return recalculateCart(updatedItems)
+  const updatedItems = cart.items.map((i) =>
+    i.cartItemId === cartItemId ? { ...i, quantity } : i,
+  );
+  return recalculateCart(updatedItems);
 }
 
 /**
@@ -123,7 +117,7 @@ export function updateItemQuantity(
  * Called after a successful order is placed.
  */
 export function clearCart(): Cart {
-  return EMPTY_CART
+  return EMPTY_CART;
 }
 
 /**
@@ -131,10 +125,7 @@ export function clearCart(): Cart {
  * Always call this after modifying the items array.
  */
 function recalculateCart(items: CartItem[]): Cart {
-  const itemCount = items.reduce((sum, i) => sum + i.quantity, 0)
-  const subtotal = items.reduce(
-    (sum, i) => sum + i.totalPrice * i.quantity,
-    0
-  )
-  return { items, itemCount, subtotal }
+  const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
+  const subtotal = items.reduce((sum, i) => sum + i.totalPrice * i.quantity, 0);
+  return { items, itemCount, subtotal };
 }

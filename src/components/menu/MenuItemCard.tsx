@@ -9,36 +9,36 @@
  * WHY: Delivers premium split-action card UX anchoring price, call-to-action, and real-time inventory status.
  */
 
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useCart } from '@/context/CartContext'
-import { useTranslations } from 'next-intl'
-import { Badge } from '@/components/ui/Badge'
-import ItemCustomizationModal from './ItemCustomizationModal'
-import type { MenuItem } from '@/types/menu'
+import { useState } from 'react';
+import { useCart } from '@/context/CartContext';
+import { useTranslations } from 'next-intl';
+import { Badge } from '@/components/ui/Badge';
+import ItemCustomizationModal from './ItemCustomizationModal';
+import type { MenuItem } from '@/types/menu';
 
 export type MenuItemCardProps = {
-  item: MenuItem
-  interactive?: boolean
-  isUnavailable?: boolean
-}
+  item: MenuItem;
+  interactive?: boolean;
+  isUnavailable?: boolean;
+};
 
 export default function MenuItemCard({
   item,
   interactive = false,
   isUnavailable = false,
 }: MenuItemCardProps) {
-  const { addSimpleItem } = useCart()
-  const t = useTranslations()
-  const [modalOpen, setModalOpen] = useState(false)
+  const { addSimpleItem } = useCart();
+  const t = useTranslations();
+  const [modalOpen, setModalOpen] = useState(false);
 
   function handleAddClick() {
-    if (!interactive || isUnavailable) return
+    if (!interactive || isUnavailable) return;
     if (item.type === 'main') {
-      setModalOpen(true)
+      setModalOpen(true);
     } else {
-      addSimpleItem(item.id, t(item.nameKey), item.price)
+      addSimpleItem(item.id, t(item.nameKey), item.price);
     }
   }
 
@@ -50,10 +50,7 @@ export default function MenuItemCard({
           {/* Badge if present */}
           {item.badge && (
             <div className="mb-3">
-              <Badge
-                variant={item.badge}
-                label={t(`menu.badges.${item.badge}`)}
-              />
+              <Badge variant={item.badge} label={t(`menu.badges.${item.badge}`)} />
             </div>
           )}
 
@@ -66,7 +63,7 @@ export default function MenuItemCard({
           <p className="text-xs text-white/45 uppercase tracking-wide mt-2 leading-relaxed">
             {t(item.descriptionKey)
               .split(',')
-              .map(s => s.trim())
+              .map((s) => s.trim())
               .join(' · ')}
           </p>
         </div>
@@ -101,17 +98,13 @@ export default function MenuItemCard({
             {/* Right: add action */}
             <div className="flex items-center justify-center px-5 py-3 flex-1 bg-brand-gold/0 group-hover:bg-brand-gold transition-colors">
               <span className="font-display text-brand-gold text-sm uppercase tracking-widest font-bold group-hover:text-brand-black transition-colors">
-                {item.type === 'main'
-                  ? `+ ${t('menu.customize')}`
-                  : `+ ${t('cart.addToCart')}`}
+                {item.type === 'main' ? `+ ${t('menu.customize')}` : `+ ${t('cart.addToCart')}`}
               </span>
             </div>
           </button>
         ) : (
           <div className="flex items-center justify-between border-t border-white/10 px-5 py-3">
-            <span className="font-display text-brand-gold text-xl font-bold">
-              {item.price} kr
-            </span>
+            <span className="font-display text-brand-gold text-xl font-bold">{item.price} kr</span>
           </div>
         )}
       </div>
@@ -125,7 +118,7 @@ export default function MenuItemCard({
         />
       )}
     </>
-  )
+  );
 }
 
-export { MenuItemCard }
+export { MenuItemCard };

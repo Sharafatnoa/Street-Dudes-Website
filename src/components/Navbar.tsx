@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { useTranslations, useLocale } from 'next-intl'
-import { LanguageToggle } from './ui/LanguageToggle'
-import Link from 'next/link'
+import React from 'react';
+import { useTranslations, useLocale } from 'next-intl';
+import { LanguageToggle } from './ui/LanguageToggle';
+import Link from 'next/link';
 
 /**
  * Navbar component providing sticky primary header navigation, language toggle, and ORDER ONLINE action button.
@@ -11,8 +11,8 @@ import Link from 'next/link'
  * WHY: Delivers Phase 1 central header navigation layout linking to the dedicated order page.
  */
 export function Navbar() {
-  const t = useTranslations()
-  const locale = useLocale()
+  const t = useTranslations();
+  const locale = useLocale();
 
   // Navigation target mappings scrolling to corresponding sections
   const navLinks = [
@@ -20,14 +20,14 @@ export function Navbar() {
     { id: 'tacos-burritos', label: t('menu.categories.tacosBurritos') },
     { id: 'bowls', label: t('menu.categories.bowls') },
     { id: 'sides', label: t('menu.categories.sides') },
-  ]
+  ];
 
   const handleScroll = (id: string) => {
-    const element = document.getElementById(id)
+    const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-[#0b0b0b] border-b border-zinc-900 py-4 px-6 shadow-xl">
@@ -67,7 +67,7 @@ export function Navbar() {
         </div>
       </div>
     </nav>
-  )
+  );
 }
 
-export default Navbar
+export default Navbar;

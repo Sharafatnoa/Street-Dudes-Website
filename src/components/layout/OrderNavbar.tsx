@@ -8,24 +8,23 @@
  * WHY: Provides top bar branding and cart trigger on the ordering interface.
  */
 
-'use client'
+'use client';
 
-import { useCart } from '@/context/CartContext'
-import { useTranslations } from 'next-intl'
-import { LanguageToggle } from '@/components/ui/LanguageToggle'
-import Link from 'next/link'
+import { useCart } from '@/context/CartContext';
+import { useTranslations } from 'next-intl';
+import { LanguageToggle } from '@/components/ui/LanguageToggle';
+import Link from 'next/link';
 
 type OrderNavbarProps = {
-  onCartOpen: () => void
-}
+  onCartOpen: () => void;
+};
 
 export default function OrderNavbar({ onCartOpen }: OrderNavbarProps) {
-  const { cart } = useCart()
-  const t = useTranslations()
+  const { cart } = useCart();
+  const t = useTranslations();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-30 bg-brand-black border-b border-brand-gold/20 flex items-center justify-between px-6 h-16">
-
       {/* Logo — links back to menu homepage */}
       <Link
         href="/"
@@ -53,5 +52,5 @@ export default function OrderNavbar({ onCartOpen }: OrderNavbarProps) {
         </button>
       </div>
     </nav>
-  )
+  );
 }

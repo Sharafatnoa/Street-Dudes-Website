@@ -8,31 +8,29 @@
  * WHY: Modularly encapsulates item listings by groups, supporting read-only or interactive modes.
  */
 
-'use client'
+'use client';
 
-import React from 'react'
-import { useTranslations } from 'next-intl'
-import { MenuCategory } from '@/types/menu'
-import { MenuItemCard } from './MenuItemCard'
+import React from 'react';
+import { useTranslations } from 'next-intl';
+import { MenuCategory } from '@/types/menu';
+import { MenuItemCard } from './MenuItemCard';
 
 export type MenuSectionProps = {
-  category: MenuCategory
-  interactive?: boolean
-  unavailableItemIds?: string[]
-}
+  category: MenuCategory;
+  interactive?: boolean;
+  unavailableItemIds?: string[];
+};
 
 export function MenuSection({
   category,
   interactive = false,
   unavailableItemIds = [],
 }: MenuSectionProps) {
-  const t = useTranslations()
+  const t = useTranslations();
 
-  const visibleItems = category.items.filter(
-    item => item.type !== 'addon'
-  )
+  const visibleItems = category.items.filter((item) => item.type !== 'addon');
 
-  if (visibleItems.length === 0) return null
+  if (visibleItems.length === 0) return null;
 
   return (
     <section
@@ -55,7 +53,7 @@ export function MenuSection({
         ))}
       </div>
     </section>
-  )
+  );
 }
 
-export default MenuSection
+export default MenuSection;

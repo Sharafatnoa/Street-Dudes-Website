@@ -8,23 +8,20 @@
  * and rendering read-only (homepage) or interactive (order page) menu sections.
  */
 
-import React from 'react'
-import { useTranslations } from 'next-intl'
-import { MENU_DATA } from '@/data/menu'
-import { CategoryTabs } from '../CategoryTabs'
-import { MenuSection } from './MenuSection'
-import { OrderButton } from '../OrderButton'
+import React from 'react';
+import { useTranslations } from 'next-intl';
+import { MENU_DATA } from '@/data/menu';
+import { CategoryTabs } from '../CategoryTabs';
+import { MenuSection } from './MenuSection';
+import { OrderButton } from '../OrderButton';
 
 export type MenuPageProps = {
-  interactive?: boolean
-  unavailableItemIds?: string[]
-}
+  interactive?: boolean;
+  unavailableItemIds?: string[];
+};
 
-export function MenuPage({
-  interactive = false,
-  unavailableItemIds = [],
-}: MenuPageProps) {
-  const t = useTranslations()
+export function MenuPage({ interactive = false, unavailableItemIds = [] }: MenuPageProps) {
+  const t = useTranslations();
 
   // Map category listings to tab navigation labels, filtering out addon-only categories
   const categoriesList = MENU_DATA.categories
@@ -32,7 +29,7 @@ export function MenuPage({
     .map((category) => ({
       id: category.id,
       label: t(category.labelKey),
-    }))
+    }));
 
   return (
     <div className="flex flex-col gap-8">
@@ -56,7 +53,7 @@ export function MenuPage({
         <OrderButton />
       </div>
     </div>
-  )
+  );
 }
 
-export default MenuPage
+export default MenuPage;

@@ -7,56 +7,54 @@
  * Shows different colours and messages per state.
  */
 
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 
-export type StatusState = 'OPEN' | 'BREAK' | 'CLOSED' | 'PAUSED' | 'LOADING'
+export type StatusState = 'OPEN' | 'BREAK' | 'CLOSED' | 'PAUSED' | 'LOADING';
 
 export type StatusData = {
-  state: StatusState
-  message: string
-  nextOpenTime: string | null
-  estimatedDeliveryMins: number
-  estimatedPickupMins: number
-  unavailableItemIds: string[]
-  deliveryEnabled: boolean
-  pickupEnabled: boolean
-}
+  state: StatusState;
+  message: string;
+  nextOpenTime: string | null;
+  estimatedDeliveryMins: number;
+  estimatedPickupMins: number;
+  unavailableItemIds: string[];
+  deliveryEnabled: boolean;
+  pickupEnabled: boolean;
+};
 
 type RestaurantStatusBannerProps = {
-  onStatusLoad?: (data: StatusData) => void
-}
+  onStatusLoad?: (data: StatusData) => void;
+};
 
-export default function RestaurantStatusBanner({
-  onStatusLoad
-}: RestaurantStatusBannerProps) {
-  const [status, setStatus] = useState<StatusState>('LOADING')
-  const [message, setMessage] = useState('')
+export default function RestaurantStatusBanner({ onStatusLoad }: RestaurantStatusBannerProps) {
+  const [status, setStatus] = useState<StatusState>('LOADING');
+  const [message, setMessage] = useState('');
 
   async function fetchStatus() {
     try {
-      const response = await fetch('/api/status')
-      const data: StatusData = await response.json()
-      setStatus(data.state)
-      setMessage(data.message)
-      onStatusLoad?.(data)
+      const response = await fetch('/api/status');
+      const data: StatusData = await response.json();
+      setStatus(data.state);
+      setMessage(data.message);
+      onStatusLoad?.(data);
     } catch {
       // If status fetch fails, assume open to avoid
       // blocking orders unnecessarily
-      setStatus('OPEN')
-      setMessage('')
+      setStatus('OPEN');
+      setMessage('');
     }
   }
 
   // Fetch on mount and every 60 seconds
   useEffect(() => {
-    fetchStatus()
-    const interval = setInterval(fetchStatus, 60_000)
-    return () => clearInterval(interval)
-  }, [])
+    fetchStatus();
+    const interval = setInterval(fetchStatus, 60_000);
+    return () => clearInterval(interval);
+  }, []);
 
-  if (status === 'LOADING') return null
+  if (status === 'LOADING') return null;
 
   if (status === 'OPEN') {
     return (
@@ -64,7 +62,7 @@ export default function RestaurantStatusBanner({
         <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse shrink-0" />
         <span className="text-green-400 text-sm font-medium">{message}</span>
       </div>
-    )
+    );
   }
 
   if (status === 'BREAK') {
@@ -73,7 +71,7 @@ export default function RestaurantStatusBanner({
         <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
         <span className="text-amber-400 text-sm font-medium">{message}</span>
       </div>
-    )
+    );
   }
 
   if (status === 'PAUSED') {
@@ -87,7 +85,7 @@ export default function RestaurantStatusBanner({
         </div>
         <p className="text-amber-300/70 text-sm">{message}</p>
       </div>
-    )
+    );
   }
 
   // CLOSED state
@@ -101,5 +99,5 @@ export default function RestaurantStatusBanner({
       </div>
       <p className="text-red-300/70 text-sm">{message}</p>
     </div>
-  )
+  );
 }

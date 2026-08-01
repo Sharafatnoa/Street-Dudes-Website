@@ -11,36 +11,27 @@
  *   approximate area — the client should prompt manual entry.
  */
 
-import { NextRequest, NextResponse } from 'next/server'
-import { reverseGeocodeCoordinates } from '@/lib/geocode'
+import { NextRequest, NextResponse } from 'next/server';
+import { reverseGeocodeCoordinates } from '@/lib/geocode';
 
 export async function POST(request: NextRequest) {
   try {
-    const { lat, lng } = await request.json()
+    const { lat, lng } = await request.json();
 
     if (typeof lat !== 'number' || typeof lng !== 'number') {
-      return NextResponse.json(
-        { error: 'Ogiltiga koordinater' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Ogiltiga koordinater' }, { status: 400 });
     }
 
-    const result = await reverseGeocodeCoordinates(lat, lng)
+    const result = await reverseGeocodeCoordinates(lat, lng);
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: result.error },
-        { status: 422 }
-      )
+      return NextResponse.json({ error: result.error }, { status: 422 });
     }
 
     // Return parsed fields directly — client uses them without further parsing
-    return NextResponse.json(result.parsed)
+    return NextResponse.json(result.parsed);
   } catch (error) {
-    console.error('Reverse geocode error:', error)
-    return NextResponse.json(
-      { error: 'Kunde inte hämta adress' },
-      { status: 500 }
-    )
+    console.error('Reverse geocode error:', error);
+    return NextResponse.json({ error: 'Kunde inte hämta adress' }, { status: 500 });
   }
 }

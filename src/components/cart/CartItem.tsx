@@ -8,17 +8,17 @@
  * WHY: Enables reviewing and updating quantity of customized cart items within the drawer.
  */
 
-'use client'
+'use client';
 
-import { useCart } from '@/context/CartContext'
-import type { CartItem as CartItemType } from '@/types/order'
+import { useCart } from '@/context/CartContext';
+import type { CartItem as CartItemType } from '@/types/order';
 
 type CartItemProps = {
-  item: CartItemType
-}
+  item: CartItemType;
+};
 
 export default function CartItem({ item }: CartItemProps) {
-  const { updateQuantity } = useCart()
+  const { updateQuantity } = useCart();
 
   return (
     <div className="flex items-start justify-between py-3 border-b border-white/10 gap-3">
@@ -40,15 +40,11 @@ export default function CartItem({ item }: CartItemProps) {
 
           {/* Removed Ingredients */}
           {item.removedIngredients.length > 0 && (
-            <p className="text-red-400/80">
-              Utan: {item.removedIngredients.join(', ')}
-            </p>
+            <p className="text-red-400/80">Utan: {item.removedIngredients.join(', ')}</p>
           )}
 
           {/* Added Sauce */}
-          {item.addedSauce && (
-            <p className="text-brand-gold">+Sås +10 kr</p>
-          )}
+          {item.addedSauce && <p className="text-brand-gold">+Sås +10 kr</p>}
 
           {/* Addons */}
           {item.addons.map((addon) => (
@@ -59,9 +55,7 @@ export default function CartItem({ item }: CartItemProps) {
 
           {/* Special Instructions */}
           {item.specialInstructions && (
-            <p className="italic text-white/40 mt-0.5">
-              &quot;{item.specialInstructions}&quot;
-            </p>
+            <p className="italic text-white/40 mt-0.5">&quot;{item.specialInstructions}&quot;</p>
           )}
         </div>
 
@@ -80,9 +74,7 @@ export default function CartItem({ item }: CartItemProps) {
         >
           −
         </button>
-        <span className="text-white font-display text-base w-4 text-center">
-          {item.quantity}
-        </span>
+        <span className="text-white font-display text-base w-4 text-center">{item.quantity}</span>
         <button
           onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)}
           className="w-7 h-7 bg-brand-gold text-brand-black rounded-sm hover:bg-yellow-400 transition-colors text-lg flex items-center justify-center leading-none font-bold"
@@ -92,5 +84,5 @@ export default function CartItem({ item }: CartItemProps) {
         </button>
       </div>
     </div>
-  )
+  );
 }

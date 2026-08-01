@@ -12,10 +12,10 @@
  * hammering Supabase on every page load.
  */
 
-import { NextResponse } from 'next/server'
-import { getConfig } from '@/lib/getConfig'
-import { getRestaurantStatus } from '@/lib/openingHours'
-import { getServerClient } from '@/lib/supabase'
+import { NextResponse } from 'next/server';
+import { getConfig } from '@/lib/getConfig';
+import { getRestaurantStatus } from '@/lib/openingHours';
+import { getServerClient } from '@/lib/supabase';
 
 // Forces this route to re-execute on every request instead
 // of being cached by Next.js's default fetch caching layer.
@@ -24,46 +24,42 @@ import { getServerClient } from '@/lib/supabase'
 // (opening hours, delivery fee, pause state, etc.) never
 // reflect until the server restarts — even though getConfig()
 // itself queries Supabase fresh on every call.
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const [config, supabase] = await Promise.all([
-      getConfig(),
-      Promise.resolve(getServerClient()),
-    ])
+    const [config, supabase] = await Promise.all([getConfig(), Promise.resolve(getServerClient())]);
 
-    const status = getRestaurantStatus(config)
+    const status = getRestaurantStatus(config);
 
     // Fetch unavailable items
     const { data: unavailableItems } = await supabase
       .from('item_availability')
       .select('menu_item_id')
-      .eq('available', false)
+      .eq('available', false);
 
-    const unavailableIds = (unavailableItems ?? [])
-      .map(row => row.menu_item_id)
+    const unavailableIds = (unavailableItems ?? []).map((row) => row.menu_item_id);
 
-    return NextResponse.json({
-      state: status.state,
-      message: status.message,
-      nextOpenTime: status.nextOpenTime,
-      estimatedDeliveryMins: status.estimatedDeliveryMins,
-      estimatedPickupMins: status.estimatedPickupMins,
-      unavailableItemIds: unavailableIds,
-      deliveryEnabled: config.deliveryEnabled,
-      pickupEnabled: config.pickupEnabled,
-    }, {
-      headers: {
-        // Cache for 30 seconds
-        'Cache-Control': 'public, s-maxage=30',
-      }
-    })
-  } catch (error) {
-    console.error('Status API error:', error)
     return NextResponse.json(
-      { error: 'Could not fetch restaurant status' },
-      { status: 500 }
-    )
+      {
+        state: status.state,
+        message: status.message,
+        nextOpenTime: status.nextOpenTime,
+        estimatedDeliveryMins: status.estimatedDeliveryMins,
+        estimatedPickupMins: status.estimatedPickupMins,
+        unavailableItemIds: unavailableIds,
+        deliveryEnabled: config.deliveryEnabled,
+        pickupEnabled: config.pickupEnabled,
+      },
+      {
+        headers: {
+          // Cache for 30 seconds
+          'Cache-Control': 'public, s-maxage=30',
+        },
+      },
+    );
+  } catch (error) {
+    console.error('Status API error:', error);
+    return NextResponse.json({ error: 'Could not fetch restaurant status' }, { status: 500 });
   }
 }

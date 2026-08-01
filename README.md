@@ -9,26 +9,26 @@ Live: [streetdudes.se](https://streetdudes.se)
 
 ## Tech Stack
 
-| Layer      | Tool                  | Purpose                                     |
-|------------|-----------------------|---------------------------------------------|
-| Framework  | Next.js 14 App Router | Routing, API, SSR                           |
-| Language   | TypeScript strict     | Type safety across the full stack           |
-| Styling    | Tailwind CSS          | Utility-first, brand tokens in brand.ts     |
-| i18n       | next-intl             | Swedish (sv) default, English (en) toggle   |
-| Database   | Supabase (PostgreSQL) | Orders, config, realtime kitchen updates    |
-| Testing    | Jest + Playwright     | Unit tests + E2E user flow verification     |
-| Hosting    | Vercel                | Automatic deploys from main branch          |
+| Layer     | Tool                  | Purpose                                   |
+| --------- | --------------------- | ----------------------------------------- |
+| Framework | Next.js 14 App Router | Routing, API, SSR                         |
+| Language  | TypeScript strict     | Type safety across the full stack         |
+| Styling   | Tailwind CSS          | Utility-first, brand tokens in brand.ts   |
+| i18n      | next-intl             | Swedish (sv) default, English (en) toggle |
+| Database  | Supabase (PostgreSQL) | Orders, config, realtime kitchen updates  |
+| Testing   | Jest + Playwright     | Unit tests + E2E user flow verification   |
+| Hosting   | Vercel                | Automatic deploys from main branch        |
 
 ---
 
 ## Project Status
 
-| Phase | Description                        | Status      |
-|-------|------------------------------------|-------------|
-| 1     | Bilingual menu website             | ✅ Live      |
-| 2     | Online ordering + delivery system  | 🔄 Building  |
-| 3     | Payments (Stripe + Swish)          | ⏳ Planned   |
-| 4     | Loyalty, promos, analytics         | ⏳ Planned   |
+| Phase | Description                       | Status      |
+| ----- | --------------------------------- | ----------- |
+| 1     | Bilingual menu website            | ✅ Live     |
+| 2     | Online ordering + delivery system | 🔄 Building |
+| 3     | Payments (Stripe + Swish)         | ⏳ Planned  |
+| 4     | Loyalty, promos, analytics        | ⏳ Planned  |
 
 ---
 
@@ -78,14 +78,14 @@ RESEND_API_KEY=                   # resend.com — order confirmation emails
 
 ## Scripts
 
-| Command              | What it does                                    |
-|----------------------|-------------------------------------------------|
-| `npm run dev`        | Start local development server                  |
-| `npm run build`      | Build production bundle                         |
-| `npm run lint`       | Check code quality with ESLint                  |
-| `npm run format`     | Format code with Prettier                       |
-| `npm run test`       | Run Jest unit tests                             |
-| `npm run test:e2e`   | Run Playwright end-to-end tests                 |
+| Command            | What it does                    |
+| ------------------ | ------------------------------- |
+| `npm run dev`      | Start local development server  |
+| `npm run build`    | Build production bundle         |
+| `npm run lint`     | Check code quality with ESLint  |
+| `npm run format`   | Format code with Prettier       |
+| `npm run test`     | Run Jest unit tests             |
+| `npm run test:e2e` | Run Playwright end-to-end tests |
 
 ---
 
@@ -93,41 +93,41 @@ RESEND_API_KEY=                   # resend.com — order confirmation emails
 
 ### Content Changes (no code needed)
 
-| Need to...                           | Where                                    |
-|--------------------------------------|------------------------------------------|
-| Change a menu item price             | `src/data/menu.ts`                       |
-| Add a new menu item                  | `src/data/menu.ts`                       |
-| Change item customization options    | `src/data/menu.ts` → item.customization  |
-| Change Swedish UI text               | `src/i18n/sv.json`                       |
-| Change English UI text               | `src/i18n/en.json`                       |
-| Change opening hours                 | `src/i18n/sv.json` + `en.json`           |
-| Change brand colours or fonts        | `src/styles/brand.ts`                    |
+| Need to...                        | Where                                   |
+| --------------------------------- | --------------------------------------- |
+| Change a menu item price          | `src/data/menu.ts`                      |
+| Add a new menu item               | `src/data/menu.ts`                      |
+| Change item customization options | `src/data/menu.ts` → item.customization |
+| Change Swedish UI text            | `src/i18n/sv.json`                      |
+| Change English UI text            | `src/i18n/en.json`                      |
+| Change opening hours              | `src/i18n/sv.json` + `en.json`          |
+| Change brand colours or fonts     | `src/styles/brand.ts`                   |
 
 ### Config Changes (Supabase dashboard or Admin UI)
 
-| Need to...                           | Where                                    |
-|--------------------------------------|------------------------------------------|
-| Change delivery radius               | Supabase → config → delivery_radius_km   |
-| Change delivery fee                  | Supabase → config → delivery_fee_kr      |
-| Change free delivery threshold       | Supabase → config → free_delivery_threshold_kr |
-| Change minimum order amount          | Supabase → config → min_order_kr         |
-| Change estimated delivery time       | Supabase → config → estimated_delivery_mins |
-| Turn ordering on or off              | Supabase → config → is_open              |
+| Need to...                     | Where                                          |
+| ------------------------------ | ---------------------------------------------- |
+| Change delivery radius         | Supabase → config → delivery_radius_km         |
+| Change delivery fee            | Supabase → config → delivery_fee_kr            |
+| Change free delivery threshold | Supabase → config → free_delivery_threshold_kr |
+| Change minimum order amount    | Supabase → config → min_order_kr               |
+| Change estimated delivery time | Supabase → config → estimated_delivery_mins    |
+| Turn ordering on or off        | Supabase → config → is_open                    |
 
 ### Code Changes
 
-| Need to...                           | Where                                    |
-|--------------------------------------|------------------------------------------|
-| Change the map location              | `src/components/map/RestaurantMap.tsx`   |
-| Change cart behaviour                | `src/lib/cart.ts`                        |
-| Change delivery radius logic         | `src/lib/haversine.ts`                   |
-| Change address geocoding             | `src/lib/geocode.ts`                     |
-| Change order creation logic          | `src/app/api/orders/route.ts`            |
-| Change delivery validation logic     | `src/app/api/delivery/validate/route.ts` |
-| Change kitchen dashboard             | `src/components/kitchen/`                |
-| Change admin config UI               | `src/components/admin/`                  |
-| Add a new page                       | `src/app/[locale]/new-page/page.tsx`     |
-| Add a new API endpoint               | `src/app/api/endpoint-name/route.ts`     |
+| Need to...                       | Where                                    |
+| -------------------------------- | ---------------------------------------- |
+| Change the map location          | `src/components/map/RestaurantMap.tsx`   |
+| Change cart behaviour            | `src/lib/cart.ts`                        |
+| Change delivery radius logic     | `src/lib/haversine.ts`                   |
+| Change address geocoding         | `src/lib/geocode.ts`                     |
+| Change order creation logic      | `src/app/api/orders/route.ts`            |
+| Change delivery validation logic | `src/app/api/delivery/validate/route.ts` |
+| Change kitchen dashboard         | `src/components/kitchen/`                |
+| Change admin config UI           | `src/components/admin/`                  |
+| Add a new page                   | `src/app/[locale]/new-page/page.tsx`     |
+| Add a new API endpoint           | `src/app/api/endpoint-name/route.ts`     |
 
 ---
 
@@ -192,18 +192,18 @@ src/
 
 ## Key URLs
 
-| URL                        | Description                              |
-|----------------------------|------------------------------------------|
-| `/sv`                      | Homepage in Swedish (default)            |
-| `/en`                      | Homepage in English                      |
-| `/sv/order`                | Online ordering page                     |
-| `/sv/checkout`             | Checkout form                            |
-| `/sv/order/[number]`       | Order confirmation                       |
-| `/kitchen`                 | Kitchen dashboard (requires KITCHEN_PIN) |
-| `/admin`                   | Admin config UI (requires ADMIN_PIN)     |
-| `/api/orders`              | POST — create a new order                |
-| `/api/delivery/validate`   | POST — validate delivery address         |
-| `/api/config`              | GET/PATCH — read or update config        |
+| URL                      | Description                              |
+| ------------------------ | ---------------------------------------- |
+| `/sv`                    | Homepage in Swedish (default)            |
+| `/en`                    | Homepage in English                      |
+| `/sv/order`              | Online ordering page                     |
+| `/sv/checkout`           | Checkout form                            |
+| `/sv/order/[number]`     | Order confirmation                       |
+| `/kitchen`               | Kitchen dashboard (requires KITCHEN_PIN) |
+| `/admin`                 | Admin config UI (requires ADMIN_PIN)     |
+| `/api/orders`            | POST — create a new order                |
+| `/api/delivery/validate` | POST — validate delivery address         |
+| `/api/config`            | GET/PATCH — read or update config        |
 
 ---
 
@@ -213,6 +213,7 @@ Supabase project: `mnzrceufcnyfvpuavdxj.supabase.co`
 Region: EU West (Ireland)
 
 Two tables:
+
 - `config` — dynamic settings Yasha can change anytime
 - `orders` — every customer order with full details
 
@@ -229,7 +230,7 @@ are in `.antigravity/AGENTS.md`. Read this before making any changes.
 
 ## Branches
 
-| Branch           | Purpose                                    |
-|------------------|--------------------------------------------|
-| `main`           | Production — auto-deploys to streetdudes.se|
-| `phase-1-backup` | Snapshot of completed Phase 1 menu website |
+| Branch           | Purpose                                     |
+| ---------------- | ------------------------------------------- |
+| `main`           | Production — auto-deploys to streetdudes.se |
+| `phase-1-backup` | Snapshot of completed Phase 1 menu website  |

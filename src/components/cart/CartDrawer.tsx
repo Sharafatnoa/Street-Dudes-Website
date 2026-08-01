@@ -8,38 +8,34 @@
  * WHY: Provides quick cart management and checkout navigation with fully opaque panel.
  */
 
-'use client'
+'use client';
 
-import { useCart } from '@/context/CartContext'
-import { useLocale, useTranslations } from 'next-intl'
-import { useRouter } from 'next/navigation'
-import CartItem from './CartItem'
+import { useCart } from '@/context/CartContext';
+import { useLocale, useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
+import CartItem from './CartItem';
 
 type CartDrawerProps = {
-  isOpen: boolean
-  onClose: () => void
-}
+  isOpen: boolean;
+  onClose: () => void;
+};
 
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-  const { cart } = useCart()
-  const t = useTranslations()
-  const locale = useLocale()
-  const router = useRouter()
+  const { cart } = useCart();
+  const t = useTranslations();
+  const locale = useLocale();
+  const router = useRouter();
 
   function handleCheckout() {
-    onClose()
-    router.push(`/${locale}/checkout`)
+    onClose();
+    router.push(`/${locale}/checkout`);
   }
-
 
   return (
     <>
       {/* Dark overlay behind the drawer */}
       {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/80 z-40 backdrop-blur-sm"
-          onClick={onClose}
-        />
+        <div className="fixed inset-0 bg-black/80 z-40 backdrop-blur-sm" onClick={onClose} />
       )}
 
       {/* Drawer panel */}
@@ -69,7 +65,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             </p>
           ) : (
             <div className="flex flex-col gap-3">
-              {cart.items.map(item => (
+              {cart.items.map((item) => (
                 <CartItem key={item.cartItemId} item={item} />
               ))}
             </div>
@@ -97,5 +93,5 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         )}
       </div>
     </>
-  )
+  );
 }

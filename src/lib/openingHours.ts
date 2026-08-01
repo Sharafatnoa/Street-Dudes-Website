@@ -12,28 +12,28 @@
  * which is UTC+1 in winter and UTC+2 in summer.
  */
 
-import { getDay, getHours, getMinutes } from 'date-fns'
-import { toZonedTime } from 'date-fns-tz'
-import type { AppConfig } from '@/types/config'
+import { getDay, getHours, getMinutes } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
+import type { AppConfig } from '@/types/config';
 
-const STOCKHOLM_TIMEZONE = 'Europe/Stockholm'
+const STOCKHOLM_TIMEZONE = 'Europe/Stockholm';
 
-export type RestaurantState = 'OPEN' | 'BREAK' | 'CLOSED' | 'PAUSED'
+export type RestaurantState = 'OPEN' | 'BREAK' | 'CLOSED' | 'PAUSED';
 
 export type RestaurantStatus = {
-  state: RestaurantState
-  message: string
-  nextOpenTime: string | null
-  estimatedDeliveryMins: number
-  estimatedPickupMins: number
-}
+  state: RestaurantState;
+  message: string;
+  nextOpenTime: string | null;
+  estimatedDeliveryMins: number;
+  estimatedPickupMins: number;
+};
 
 /**
  * Parses a time string "HH:MM" into hours and minutes.
  */
 function parseTime(time: string): { hours: number; minutes: number } {
-  const [hours, minutes] = time.split(':').map(Number)
-  return { hours, minutes }
+  const [hours, minutes] = time.split(':').map(Number);
+  return { hours, minutes };
 }
 
 /**
@@ -41,8 +41,8 @@ function parseTime(time: string): { hours: number; minutes: number } {
  * Used for easy time comparisons.
  */
 function timeToMinutes(time: string): number {
-  const { hours, minutes } = parseTime(time)
-  return hours * 60 + minutes
+  const { hours, minutes } = parseTime(time);
+  return hours * 60 + minutes;
 }
 
 /**
@@ -50,7 +50,7 @@ function timeToMinutes(time: string): number {
  * Example: "11:00" → "11:00"
  */
 function formatTime(time: string): string {
-  return time
+  return time;
 }
 
 /**
@@ -60,8 +60,8 @@ function formatTime(time: string): string {
 function isWeekend(stockholmDate: Date): boolean {
   // Use date-fns getDay — reads the shifted internal value from toZonedTime
   // correctly instead of the system-local day from Date.prototype.getDay()
-  const day = getDay(stockholmDate)
-  return day === 0 || day === 6 // 0 = Sunday, 6 = Saturday
+  const day = getDay(stockholmDate);
+  return day === 0 || day === 6; // 0 = Sunday, 6 = Saturday
 }
 
 /**
@@ -69,7 +69,7 @@ function isWeekend(stockholmDate: Date): boolean {
  */
 function getCurrentMinutes(stockholmDate: Date): number {
   // Same reason as isWeekend — use date-fns helpers to read Stockholm local time
-  return getHours(stockholmDate) * 60 + getMinutes(stockholmDate)
+  return getHours(stockholmDate) * 60 + getMinutes(stockholmDate);
 }
 
 /**
@@ -88,13 +88,13 @@ export function getRestaurantStatus(config: AppConfig): RestaurantStatus {
       nextOpenTime: null,
       estimatedDeliveryMins: config.estimatedDeliveryMins,
       estimatedPickupMins: config.estimatedPickupMins,
-    }
+    };
   }
 
   // Manual pause — temporarily not accepting orders
   if (config.isPaused) {
-    const message = config.pauseMessage ||
-      'Vi tar en kort paus och tar inte emot beställningar just nu.'
+    const message =
+      config.pauseMessage || 'Vi tar en kort paus och tar inte emot beställningar just nu.';
 
     return {
       state: 'PAUSED',
@@ -102,18 +102,18 @@ export function getRestaurantStatus(config: AppConfig): RestaurantStatus {
       nextOpenTime: config.pauseUntil || null,
       estimatedDeliveryMins: config.estimatedDeliveryMins,
       estimatedPickupMins: config.estimatedPickupMins,
-    }
+    };
   }
 
   // Get current Stockholm time
-  const now = toZonedTime(new Date(), STOCKHOLM_TIMEZONE)
-  const currentMinutes = getCurrentMinutes(now)
-  const weekend = isWeekend(now)
+  const now = toZonedTime(new Date(), STOCKHOLM_TIMEZONE);
+  const currentMinutes = getCurrentMinutes(now);
+  const weekend = isWeekend(now);
 
   if (weekend) {
     // Weekend — single session, no break
-    const openMinutes = timeToMinutes(config.weekendOpen)
-    const closeMinutes = timeToMinutes(config.weekendClose)
+    const openMinutes = timeToMinutes(config.weekendOpen);
+    const closeMinutes = timeToMinutes(config.weekendClose);
 
     if (currentMinutes < openMinutes) {
       return {
@@ -122,7 +122,7 @@ export function getRestaurantStatus(config: AppConfig): RestaurantStatus {
         nextOpenTime: config.weekendOpen,
         estimatedDeliveryMins: config.estimatedDeliveryMins,
         estimatedPickupMins: config.estimatedPickupMins,
-      }
+      };
     }
 
     if (currentMinutes >= closeMinutes) {
@@ -132,7 +132,7 @@ export function getRestaurantStatus(config: AppConfig): RestaurantStatus {
         nextOpenTime: null,
         estimatedDeliveryMins: config.estimatedDeliveryMins,
         estimatedPickupMins: config.estimatedPickupMins,
-      }
+      };
     }
 
     return {
@@ -141,14 +141,14 @@ export function getRestaurantStatus(config: AppConfig): RestaurantStatus {
       nextOpenTime: null,
       estimatedDeliveryMins: config.estimatedDeliveryMins,
       estimatedPickupMins: config.estimatedPickupMins,
-    }
+    };
   }
 
   // Weekday — two sessions with a break
-  const openMinutes = timeToMinutes(config.weekdayOpen)
-  const breakStartMinutes = timeToMinutes(config.weekdayBreakStart)
-  const breakEndMinutes = timeToMinutes(config.weekdayBreakEnd)
-  const closeMinutes = timeToMinutes(config.weekdayClose)
+  const openMinutes = timeToMinutes(config.weekdayOpen);
+  const breakStartMinutes = timeToMinutes(config.weekdayBreakStart);
+  const breakEndMinutes = timeToMinutes(config.weekdayBreakEnd);
+  const closeMinutes = timeToMinutes(config.weekdayClose);
 
   // Before opening
   if (currentMinutes < openMinutes) {
@@ -158,7 +158,7 @@ export function getRestaurantStatus(config: AppConfig): RestaurantStatus {
       nextOpenTime: config.weekdayOpen,
       estimatedDeliveryMins: config.estimatedDeliveryMins,
       estimatedPickupMins: config.estimatedPickupMins,
-    }
+    };
   }
 
   // First session — open before break
@@ -169,7 +169,7 @@ export function getRestaurantStatus(config: AppConfig): RestaurantStatus {
       nextOpenTime: null,
       estimatedDeliveryMins: config.estimatedDeliveryMins,
       estimatedPickupMins: config.estimatedPickupMins,
-    }
+    };
   }
 
   // Break time
@@ -180,7 +180,7 @@ export function getRestaurantStatus(config: AppConfig): RestaurantStatus {
       nextOpenTime: config.weekdayBreakEnd,
       estimatedDeliveryMins: config.estimatedDeliveryMins,
       estimatedPickupMins: config.estimatedPickupMins,
-    }
+    };
   }
 
   // Second session — open after break
@@ -191,18 +191,17 @@ export function getRestaurantStatus(config: AppConfig): RestaurantStatus {
       nextOpenTime: null,
       estimatedDeliveryMins: config.estimatedDeliveryMins,
       estimatedPickupMins: config.estimatedPickupMins,
-    }
+    };
   }
 
   // After closing
   return {
     state: 'CLOSED',
-    message: 'Vi är stängda för idag. Vi öppnar imorgon kl ' +
-      formatTime(config.weekdayOpen),
+    message: 'Vi är stängda för idag. Vi öppnar imorgon kl ' + formatTime(config.weekdayOpen),
     nextOpenTime: null,
     estimatedDeliveryMins: config.estimatedDeliveryMins,
     estimatedPickupMins: config.estimatedPickupMins,
-  }
+  };
 }
 
 /**
@@ -211,6 +210,6 @@ export function getRestaurantStatus(config: AppConfig): RestaurantStatus {
  * in API routes before processing requests.
  */
 export function isAcceptingOrders(config: AppConfig): boolean {
-  const status = getRestaurantStatus(config)
-  return status.state === 'OPEN'
+  const status = getRestaurantStatus(config);
+  return status.state === 'OPEN';
 }

@@ -1,4 +1,4 @@
-import type { MenuCategory } from '@/types/menu'
+import type { MenuCategory } from '@/types/menu';
 
 export const menuCategories: MenuCategory[] = [
   {
@@ -13,13 +13,8 @@ export const menuCategories: MenuCategory[] = [
         type: 'main',
         badge: 'favorite',
         customization: {
-          proteinSwaps: [
-            { id: 'halloumi', name: 'Halloumi', priceDelta: 10 },
-          ],
-          ingredients: [
-            'Crispsallad', 'Cheddarost', 'Tryffelmajonnäs',
-            'Stekt lök', 'Rostad lök',
-          ],
+          proteinSwaps: [{ id: 'halloumi', name: 'Halloumi', priceDelta: 10 }],
+          ingredients: ['Crispsallad', 'Cheddarost', 'Tryffelmajonnäs', 'Stekt lök', 'Rostad lök'],
           addonIds: ['extra-burgarpuck', 'extra-protein'],
           hasSauceAddon: true,
         },
@@ -31,13 +26,8 @@ export const menuCategories: MenuCategory[] = [
         price: 99,
         type: 'main',
         customization: {
-          proteinSwaps: [
-            { id: 'halloumi', name: 'Halloumi', priceDelta: 10 },
-          ],
-          ingredients: [
-            'Cheddarost', 'Senap', 'Ketchup',
-            'Lök', 'Picklad gurka', 'Majonnäs',
-          ],
+          proteinSwaps: [{ id: 'halloumi', name: 'Halloumi', priceDelta: 10 }],
+          ingredients: ['Cheddarost', 'Senap', 'Ketchup', 'Lök', 'Picklad gurka', 'Majonnäs'],
           addonIds: ['extra-burgarpuck', 'extra-protein'],
           hasSauceAddon: true,
         },
@@ -55,12 +45,8 @@ export const menuCategories: MenuCategory[] = [
         price: 109,
         type: 'main',
         customization: {
-          proteinSwaps: [
-            { id: 'halloumi', name: 'Halloumi', priceDelta: 10 },
-          ],
-          ingredients: [
-            'Högrev', 'Ost', 'Rå lök', 'Koriander', 'Consommé',
-          ],
+          proteinSwaps: [{ id: 'halloumi', name: 'Halloumi', priceDelta: 10 }],
+          ingredients: ['Högrev', 'Ost', 'Rå lök', 'Koriander', 'Consommé'],
           addonIds: ['extra-protein'],
           hasSauceAddon: true,
         },
@@ -76,10 +62,7 @@ export const menuCategories: MenuCategory[] = [
             { id: 'kyckling', name: 'Kyckling', priceDelta: 0 },
             { id: 'halloumi', name: 'Halloumi', priceDelta: 0 },
           ],
-          ingredients: [
-            'Högrev', 'Signature ris', 'Ost',
-            'Lök', 'Crunch', 'Streetdudes Dressing',
-          ],
+          ingredients: ['Högrev', 'Signature ris', 'Ost', 'Lök', 'Crunch', 'Streetdudes Dressing'],
           addonIds: ['extra-protein'],
           hasSauceAddon: true,
         },
@@ -102,8 +85,12 @@ export const menuCategories: MenuCategory[] = [
             { id: 'halloumi', name: 'Halloumi', priceDelta: 10 },
           ],
           ingredients: [
-            'Långkokt högrev', 'Signature ris', 'Koriander',
-            'Picklad rödkål', 'Jalapeñomajonnäs', 'Streetdudes Dressing',
+            'Långkokt högrev',
+            'Signature ris',
+            'Koriander',
+            'Picklad rödkål',
+            'Jalapeñomajonnäs',
+            'Streetdudes Dressing',
           ],
           addonIds: ['extra-ris', 'extra-signature-ris', 'extra-protein'],
           hasSauceAddon: true,
@@ -118,8 +105,11 @@ export const menuCategories: MenuCategory[] = [
         customization: {
           proteinSwaps: [],
           ingredients: [
-            'Friterad kyckling', 'Ris', 'Picklad rödkål',
-            'Chilimajonnäs', 'Rostad lök',
+            'Friterad kyckling',
+            'Ris',
+            'Picklad rödkål',
+            'Chilimajonnäs',
+            'Rostad lök',
           ],
           addonIds: ['extra-ris', 'extra-signature-ris', 'extra-protein'],
           hasSauceAddon: true,
@@ -321,17 +311,17 @@ export const menuCategories: MenuCategory[] = [
       },
     ],
   },
-]
+];
 
 export const MENU_DATA = {
   categories: menuCategories,
-}
+};
 
 /**
  * Returns all addon items as a flat lookup map by ID.
  * Used by the customization modal to find addon details.
  */
 export function getAddonById(id: string) {
-  const allItems = menuCategories.flatMap(c => c.items)
-  return allItems.find(item => item.id === id) ?? null
+  const allItems = menuCategories.flatMap((c) => c.items);
+  return allItems.find((item) => item.id === id) ?? null;
 }

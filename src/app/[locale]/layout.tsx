@@ -65,9 +65,7 @@ export default async function LocaleLayout({ children, params: { locale } }: Loc
     <html lang={locale} className={`${bebasNeue.variable} ${archivo.variable}`}>
       <body className="bg-zinc-950 text-white min-h-screen antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <CartProvider>
-            {children}
-          </CartProvider>
+          <CartProvider>{children}</CartProvider>
         </NextIntlClientProvider>
       </body>
     </html>

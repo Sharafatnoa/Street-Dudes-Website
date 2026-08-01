@@ -9,21 +9,21 @@
  * WHY: Provides persistent, high-visibility cart preview and quick drawer trigger while scrolling menu items.
  */
 
-'use client'
+'use client';
 
-import { useCart } from '@/context/CartContext'
-import { useTranslations } from 'next-intl'
+import { useCart } from '@/context/CartContext';
+import { useTranslations } from 'next-intl';
 
 type FloatingCartBarProps = {
-  onOpen: () => void
-}
+  onOpen: () => void;
+};
 
 export default function FloatingCartBar({ onOpen }: FloatingCartBarProps) {
-  const { cart } = useCart()
-  const t = useTranslations()
+  const { cart } = useCart();
+  const t = useTranslations();
 
   // Only render when cart has items
-  if (cart.itemCount === 0) return null
+  if (cart.itemCount === 0) return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-30 px-4 pb-4 pt-2 bg-gradient-to-t from-black to-transparent pointer-events-none">
@@ -42,10 +42,8 @@ export default function FloatingCartBar({ onOpen }: FloatingCartBarProps) {
         </div>
 
         {/* Right: subtotal */}
-        <span className="font-display text-xl font-bold">
-          {cart.subtotal} kr
-        </span>
+        <span className="font-display text-xl font-bold">{cart.subtotal} kr</span>
       </button>
     </div>
-  )
+  );
 }
