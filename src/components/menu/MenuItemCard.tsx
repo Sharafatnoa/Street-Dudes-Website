@@ -66,6 +66,18 @@ export default function MenuItemCard({
               .map((s) => s.trim())
               .join(' · ')}
           </p>
+
+          {/* Protein swap options */}
+          {item.customization?.proteinSwaps && item.customization.proteinSwaps.length > 0 && (
+            <p className="text-[11px] text-white/35 mt-1.5 leading-relaxed">
+              <span className="text-white/45">{t('menu.swapLabel')}</span>{' '}
+              {item.customization.proteinSwaps
+                .map((swap) =>
+                  swap.priceDelta > 0 ? `${swap.name} +${swap.priceDelta} kr` : swap.name,
+                )
+                .join(' · ')}
+            </p>
+          )}
         </div>
 
         {/* Split bottom bar / Unavailable state */}

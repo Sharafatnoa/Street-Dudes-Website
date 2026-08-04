@@ -15,6 +15,7 @@
   "menu": {
     "title": "Menu",
     "customize": "CHOOSE",
+    "swapLabel": "Swap for:",
     "badges": {
       "favorite": "Favorite",
       "levelup": "Level Up"

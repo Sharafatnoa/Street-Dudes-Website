@@ -15,6 +15,7 @@
   "menu": {
     "title": "Meny",
     "customize": "VÄLJ",
+    "swapLabel": "Byt till:",
     "badges": {
       "favorite": "Favorit",
       "levelup": "Level Up"
