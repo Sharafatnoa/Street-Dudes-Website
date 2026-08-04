@@ -18,7 +18,7 @@ import { useState, useEffect } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useTranslations } from 'next-intl';
 import { getAddonById } from '@/data/menu';
-import type { MenuItem, ProteinSwap } from '@/types/menu';
+import type { MenuItem, ProteinSwap, RiceSwap } from '@/types/menu';
 import type { SelectedAddon } from '@/types/order';
 
 type ItemCustomizationModalProps = {
@@ -38,6 +38,7 @@ export default function ItemCustomizationModal({
   const t = useTranslations();
 
   const [selectedSwap, setSelectedSwap] = useState<ProteinSwap | null>(null);
+  const [selectedRiceSwap, setSelectedRiceSwap] = useState<RiceSwap | null>(null);
   const [removedIngredients, setRemovedIngredients] = useState<string[]>([]);
   const [addedSauce, setAddedSauce] = useState(false);
   const [selectedAddons, setSelectedAddons] = useState<SelectedAddon[]>([]);
@@ -58,9 +59,10 @@ export default function ItemCustomizationModal({
   if (!isOpen) return null;
 
   const proteinDelta = selectedSwap?.priceDelta ?? 0;
+  const riceDelta = selectedRiceSwap?.priceDelta ?? 0;
   const saucePrice = addedSauce ? SAUCE_ADDON_PRICE : 0;
   const addonsTotal = selectedAddons.reduce((sum, a) => sum + a.price, 0);
-  const totalPrice = item.price + proteinDelta + saucePrice + addonsTotal;
+  const totalPrice = item.price + proteinDelta + riceDelta + saucePrice + addonsTotal;
 
   function toggleIngredient(ingredient: string) {
     setRemovedIngredients((prev) =>
@@ -91,6 +93,7 @@ export default function ItemCustomizationModal({
       name: t(item.nameKey),
       basePrice: item.price,
       proteinSwap: selectedSwap,
+      riceSwap: selectedRiceSwap,
       removedIngredients,
       addedSauce,
       addons: selectedAddons,
@@ -104,6 +107,7 @@ export default function ItemCustomizationModal({
     // Reset all state after close animation
     setTimeout(() => {
       setSelectedSwap(null);
+      setSelectedRiceSwap(null);
       setRemovedIngredients([]);
       setAddedSauce(false);
       setSelectedAddons([]);
@@ -184,6 +188,64 @@ export default function ItemCustomizationModal({
                         name="protein"
                         checked={selectedSwap?.id === swap.id}
                         onChange={() => setSelectedSwap(swap)}
+                        className="accent-brand-gold"
+                      />
+                      <span className="text-white text-sm">{swap.name}</span>
+                    </div>
+                    <span
+                      className={`text-sm ${
+                        swap.priceDelta === 0 ? 'text-white/40' : 'text-brand-gold'
+                      }`}
+                    >
+                      {swap.priceDelta === 0 ? t('modal.free') : `+${swap.priceDelta} kr`}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Rice swap — radio buttons */}
+          {item.customization.riceSwaps && item.customization.riceSwaps.length > 0 && (
+            <section>
+              <h3 className="text-xs text-white/40 uppercase tracking-widest mb-3 flex items-center gap-2">
+                {t('modal.riceSwapLabel')}
+                <span className="text-white/20 normal-case tracking-normal font-body">
+                  — {t('modal.pickOne')}
+                </span>
+              </h3>
+              <div className="flex flex-col gap-2">
+                {/* Keep original option */}
+                <label className="flex items-center justify-between px-4 py-3 rounded-sm border cursor-pointer transition-colors border-white/10 hover:border-white/25">
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="radio"
+                      name="rice"
+                      checked={selectedRiceSwap === null}
+                      onChange={() => setSelectedRiceSwap(null)}
+                      className="accent-brand-gold"
+                    />
+                    <span className="text-white text-sm">{t('modal.keepOriginal')}</span>
+                  </div>
+                  <span className="text-white/40 text-sm">{t('modal.included')}</span>
+                </label>
+
+                {/* Swap options */}
+                {item.customization.riceSwaps.map((swap) => (
+                  <label
+                    key={swap.id}
+                    className={`flex items-center justify-between px-4 py-3 rounded-sm border cursor-pointer transition-colors ${
+                      selectedRiceSwap?.id === swap.id
+                        ? 'border-brand-gold/60 bg-brand-gold/8'
+                        : 'border-white/10 hover:border-white/25'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        name="rice"
+                        checked={selectedRiceSwap?.id === swap.id}
+                        onChange={() => setSelectedRiceSwap(swap)}
                         className="accent-brand-gold"
                       />
                       <span className="text-white text-sm">{swap.name}</span>

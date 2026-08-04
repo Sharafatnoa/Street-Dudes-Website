@@ -17,10 +17,11 @@ export function calculateItemTotalPrice(
   proteinSwapDelta: number,
   addedSauce: boolean,
   addonPrices: number[],
+  riceSwapDelta: number = 0,
 ): number {
   const saucePrice = addedSauce ? SAUCE_ADDON_PRICE : 0;
   const addonsTotal = addonPrices.reduce((sum, price) => sum + price, 0);
-  return basePrice + proteinSwapDelta + saucePrice + addonsTotal;
+  return basePrice + proteinSwapDelta + riceSwapDelta + saucePrice + addonsTotal;
 }
 
 /**
@@ -31,6 +32,7 @@ export function calculateItemTotalPrice(
  */
 export function addItemToCart(cart: Cart, input: AddToCartInput): Cart {
   const proteinDelta = input.proteinSwap?.priceDelta ?? 0;
+  const riceDelta = input.riceSwap?.priceDelta ?? 0;
   const addonPrices = input.addons.map((a) => a.price);
 
   const totalPrice = calculateItemTotalPrice(
@@ -38,6 +40,7 @@ export function addItemToCart(cart: Cart, input: AddToCartInput): Cart {
     proteinDelta,
     input.addedSauce,
     addonPrices,
+    riceDelta,
   );
 
   const newItem: CartItem = {
@@ -46,6 +49,7 @@ export function addItemToCart(cart: Cart, input: AddToCartInput): Cart {
     name: input.name,
     basePrice: input.basePrice,
     proteinSwap: input.proteinSwap,
+    riceSwap: input.riceSwap ?? null,
     removedIngredients: input.removedIngredients,
     addedSauce: input.addedSauce,
     addons: input.addons,
@@ -79,6 +83,7 @@ export function addSimpleItemToCart(
     name,
     basePrice: price,
     proteinSwap: null,
+    riceSwap: null,
     removedIngredients: [],
     addedSauce: false,
     addons: [],

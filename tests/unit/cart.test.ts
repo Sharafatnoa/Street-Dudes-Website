@@ -23,7 +23,12 @@ const testInput: AddToCartInput = {
 describe('cart functions', () => {
   it('calculates total price with protein swap, sauce, and addons', () => {
     const total = calculateItemTotalPrice(99, 10, true, [49]);
-    expect(total).toBe(167); // 99 + 10 + 10 + 49
+    expect(total).toBe(168); // 99 + 10 + 10 + 49
+  });
+
+  it('calculates total price with protein swap, rice swap, sauce, and addons', () => {
+    const total = calculateItemTotalPrice(99, 10, true, [49], 5);
+    expect(total).toBe(173); // 99 + 10 + 10 + 49 + 5
   });
 
   it('adds a customized item to an empty cart', () => {

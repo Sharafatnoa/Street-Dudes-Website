@@ -74,6 +74,11 @@ function recalculateItemPrice(item: CartItem): number | null {
     price += item.proteinSwap.priceDelta;
   }
 
+  // Rice swap delta
+  if (item.riceSwap) {
+    price += item.riceSwap.priceDelta;
+  }
+
   // Sauce addon is always a fixed 10 kr
   if (item.addedSauce) {
     price += SAUCE_ADDON_PRICE_KR;

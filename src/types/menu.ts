@@ -16,9 +16,17 @@ export type ProteinSwap = {
   priceDelta: number; // 0 = free swap, positive = extra cost in kr
 };
 
+/** A rice swap option inside the customization modal */
+export type RiceSwap = {
+  id: string;
+  name: string;
+  priceDelta: number; // 0 = free swap, positive = extra cost in kr
+};
+
 /** Customization options available for a menu item */
 export type ItemCustomization = {
   proteinSwaps: ProteinSwap[]; // Meat alternatives
+  riceSwaps?: RiceSwap[]; // Rice alternatives
   ingredients: string[]; // Removable ingredients
   addonIds: string[]; // IDs of addon items available for this item
   hasSauceAddon: boolean; // Whether +Sås +10kr option appears

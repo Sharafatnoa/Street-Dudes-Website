@@ -96,11 +96,7 @@
       },
       "extraRis": {
         "name": "EXTRA RIS",
-        "description": "Extra vitt ris"
-      },
-      "extraSignatureRis": {
-        "name": "EXTRA SIGNATURE RIS",
-        "description": "Extra kryddat Signature ris"
+        "description": "Extra ris"
       },
       "extraSas": {
         "name": "EXTRA SÅS",
@@ -198,11 +194,7 @@
       },
       "extraRis": {
         "name": "EXTRA RIS",
-        "description": "Extra vitt ris"
-      },
-      "extraTexasRis": {
-        "name": "EXTRA SIGNATURE RIS",
-        "description": "Extra kryddat Signature ris"
+        "description": "Extra ris"
       },
       "extraSas": {
         "name": "EXTRA SÅS",
@@ -219,6 +211,7 @@
   },
   "modal": {
     "swapProtein": "Byt protein",
+    "riceSwapLabel": "Byt ris",
     "pickOne": "välj ett alternativ",
     "keepOriginal": "Behåll originalet",
     "included": "Ingår",

@@ -38,6 +38,14 @@ export default function CartItem({ item }: CartItemProps) {
             </p>
           )}
 
+          {/* Rice Swap */}
+          {item.riceSwap && (
+            <p className="text-brand-gold">
+              (Byt ris: {item.riceSwap.name}{' '}
+              {item.riceSwap.priceDelta > 0 ? `+${item.riceSwap.priceDelta} kr` : ''})
+            </p>
+          )}
+
           {/* Removed Ingredients */}
           {item.removedIngredients.length > 0 && (
             <p className="text-red-400/80">Utan: {item.removedIngredients.join(', ')}</p>

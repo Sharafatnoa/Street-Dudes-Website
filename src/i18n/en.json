@@ -95,12 +95,8 @@
         "description": "Extra protein for your bowl or burrito"
       },
       "extraRis": {
-        "name": "EXTRA RIS",
-        "description": "Extra white rice"
-      },
-      "extraSignatureRis": {
-        "name": "EXTRA SIGNATURE RICE",
-        "description": "Extra spiced Signature rice"
+        "name": "EXTRA RICE",
+        "description": "Extra rice"
       },
       "extraSas": {
         "name": "EXTRA SÅS",
@@ -197,12 +193,8 @@
         "description": "Extra smash burger patty 160g"
       },
       "extraRis": {
-        "name": "EXTRA RIS",
-        "description": "Extra white rice"
-      },
-      "extraTexasRis": {
-        "name": "EXTRA SIGNATURE RICE",
-        "description": "Extra spiced Signature rice"
+        "name": "EXTRA RICE",
+        "description": "Extra rice"
       },
       "extraSas": {
         "name": "EXTRA SÅS",
@@ -219,6 +211,7 @@
   },
   "modal": {
     "swapProtein": "Swap protein",
+    "riceSwapLabel": "Swap rice",
     "pickOne": "choose one",
     "keepOriginal": "Keep original",
     "included": "Included",

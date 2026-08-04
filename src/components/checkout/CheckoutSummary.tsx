@@ -68,6 +68,12 @@ export default function CheckoutSummary({
                   ({item.proteinSwap.name} +{item.proteinSwap.priceDelta} kr)
                 </span>
               )}
+              {item.riceSwap && (
+                <span className="text-xs text-brand-gold/70">
+                  (Byt ris: {item.riceSwap.name}
+                  {item.riceSwap.priceDelta > 0 ? ` +${item.riceSwap.priceDelta} kr` : ''})
+                </span>
+              )}
               {item.removedIngredients.length > 0 && (
                 <span className="text-xs text-white/40">
                   Utan: {item.removedIngredients.join(', ')}
