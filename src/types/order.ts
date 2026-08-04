@@ -1,19 +1,11 @@
-/** All possible states an order can be in */
-export type OrderStatus =
-  | 'PENDING' // Received, waiting for kitchen to confirm
-  | 'CONFIRMED' // Kitchen accepted the order
-  | 'PREPARING' // Food is being prepared
-  | 'READY' // Ready for pickup or delivery
-  | 'DELIVERED' // Completed
-  | 'CANCELLED'; // Rejected or cancelled
+/**
+ * Valid order status values in Supabase orders table:
+ * 'pending' | 'preparing' | 'ready' | 'completed'
+ */
+export type OrderStatus = 'pending' | 'preparing' | 'ready' | 'completed';
 
-/** A single item inside an order */
-export type OrderItem = {
-  menuItemId: string;
-  name: string;
-  price: number;
-  quantity: number;
-};
+/** A single item inside an order (with full customization details) */
+export type OrderItem = CartItem;
 
 /** A complete order record from the database */
 export type Order = {

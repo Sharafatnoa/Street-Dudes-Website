@@ -269,7 +269,7 @@ export async function POST(request: NextRequest) {
     .from('orders')
     .insert({
       order_number: orderNumber,
-      status: 'PENDING',
+      status: 'pending',
       customer_name: customerName.trim(),
       customer_email: customerEmail.trim(),
       customer_phone: customerPhone?.trim() ?? '',
