@@ -60,7 +60,7 @@ export const menuCategories: MenuCategory[] = [
         customization: {
           proteinSwaps: [
             { id: 'kyckling', name: 'Kyckling', priceDelta: 0 },
-            { id: 'halloumi', name: 'Halloumi', priceDelta: 0 },
+            { id: 'halloumi', name: 'Halloumi', priceDelta: 10 },
           ],
           ingredients: ['Högrev', 'Signature ris', 'Ost', 'Lök', 'Crunch', 'Streetdudes Dressing'],
           addonIds: ['extra-protein'],
