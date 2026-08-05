@@ -120,7 +120,7 @@ export default function DeliveryAddressInput({
           setGpsError('Kunde inte hämta din plats.');
         }
       },
-      { timeout: 10000, maximumAge: 60000 },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
     );
   }
 
