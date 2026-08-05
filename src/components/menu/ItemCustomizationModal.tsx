@@ -18,7 +18,7 @@ import { useState, useEffect } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useTranslations } from 'next-intl';
 import { getAddonById } from '@/data/menu';
-import type { MenuItem, ProteinSwap, RiceSwap } from '@/types/menu';
+import type { MenuItem, ProteinSwap, RiceSwap, VariantSwap } from '@/types/menu';
 import type { SelectedAddon } from '@/types/order';
 
 type ItemCustomizationModalProps = {
@@ -39,6 +39,7 @@ export default function ItemCustomizationModal({
 
   const [selectedSwap, setSelectedSwap] = useState<ProteinSwap | null>(null);
   const [selectedRiceSwap, setSelectedRiceSwap] = useState<RiceSwap | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<VariantSwap | null>(null);
   const [removedIngredients, setRemovedIngredients] = useState<string[]>([]);
   const [addedSauce, setAddedSauce] = useState(false);
   const [selectedAddons, setSelectedAddons] = useState<SelectedAddon[]>([]);
@@ -60,9 +61,17 @@ export default function ItemCustomizationModal({
 
   const proteinDelta = selectedSwap?.priceDelta ?? 0;
   const riceDelta = selectedRiceSwap?.priceDelta ?? 0;
+  const variantDelta = selectedVariant?.priceDelta ?? 0;
   const saucePrice = addedSauce ? SAUCE_ADDON_PRICE : 0;
   const addonsTotal = selectedAddons.reduce((sum, a) => sum + a.price, 0);
-  const totalPrice = item.price + proteinDelta + riceDelta + saucePrice + addonsTotal;
+  const totalPrice =
+    item.price + proteinDelta + riceDelta + variantDelta + saucePrice + addonsTotal;
+
+  const isVariantRequiredMissing = Boolean(
+    item.customization.variantSwaps &&
+    item.customization.variantSwaps.length > 0 &&
+    !selectedVariant,
+  );
 
   function toggleIngredient(ingredient: string) {
     setRemovedIngredients((prev) =>
@@ -88,12 +97,15 @@ export default function ItemCustomizationModal({
   }
 
   function handleAddToCart() {
+    if (isVariantRequiredMissing) return;
+
     addCustomizedItem({
       menuItemId: item.id,
       name: t(item.nameKey),
       basePrice: item.price,
       proteinSwap: selectedSwap,
       riceSwap: selectedRiceSwap,
+      selectedVariant: selectedVariant,
       removedIngredients,
       addedSauce,
       addons: selectedAddons,
@@ -108,6 +120,7 @@ export default function ItemCustomizationModal({
     setTimeout(() => {
       setSelectedSwap(null);
       setSelectedRiceSwap(null);
+      setSelectedVariant(null);
       setRemovedIngredients([]);
       setAddedSauce(false);
       setSelectedAddons([]);
@@ -147,6 +160,53 @@ export default function ItemCustomizationModal({
 
         {/* Scrollable options */}
         <div className="overflow-y-auto flex-1 px-5 py-4 flex flex-col gap-6">
+          {/* Variant swap (e.g. flavor) — radio buttons */}
+          {item.customization.variantSwaps && item.customization.variantSwaps.length > 0 && (
+            <section>
+              <h3 className="text-xs text-white/40 uppercase tracking-widest mb-3 flex items-center gap-2">
+                {t('modal.variantSwapLabel')}
+                <span className="text-white/20 normal-case tracking-normal font-body">
+                  — {t('modal.pickOne')}
+                </span>
+              </h3>
+              <div className="flex flex-col gap-2">
+                {item.customization.variantSwaps.map((variant) => (
+                  <label
+                    key={variant.id}
+                    className={`flex items-center justify-between px-4 py-3 rounded-sm border cursor-pointer transition-colors ${
+                      selectedVariant?.id === variant.id
+                        ? 'border-brand-gold/60 bg-brand-gold/8'
+                        : 'border-white/10 hover:border-white/25'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        name="variant"
+                        checked={selectedVariant?.id === variant.id}
+                        onChange={() => setSelectedVariant(variant)}
+                        className="accent-brand-gold"
+                      />
+                      <span className="text-white text-sm">{variant.name}</span>
+                    </div>
+                    <span
+                      className={`text-sm ${
+                        variant.priceDelta === 0 ? 'text-white/40' : 'text-brand-gold'
+                      }`}
+                    >
+                      {variant.priceDelta === 0 ? t('modal.free') : `+${variant.priceDelta} kr`}
+                    </span>
+                  </label>
+                ))}
+              </div>
+              {!selectedVariant && (
+                <p className="text-xs text-brand-gold/80 italic mt-2 flex items-center gap-1">
+                  <span>⚠️</span> {t('modal.variantSwapRequired')}
+                </p>
+              )}
+            </section>
+          )}
+
           {/* Protein swap — radio buttons */}
           {item.customization.proteinSwaps.length > 0 && (
             <section>
@@ -385,7 +445,8 @@ export default function ItemCustomizationModal({
           </div>
           <button
             onClick={handleAddToCart}
-            className="w-full py-4 bg-brand-gold text-brand-black font-display text-lg uppercase tracking-widest rounded-sm hover:bg-yellow-400 transition-colors"
+            disabled={isVariantRequiredMissing}
+            className="w-full py-4 bg-brand-gold text-brand-black font-display text-lg uppercase tracking-widest rounded-sm hover:bg-yellow-400 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-brand-gold font-bold"
           >
             {t('modal.addToCart')}
           </button>

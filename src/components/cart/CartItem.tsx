@@ -25,7 +25,7 @@ export default function CartItem({ item }: CartItemProps) {
       <div className="flex-1">
         {/* Item name */}
         <p className="text-white text-sm font-display uppercase tracking-wide font-bold">
-          {item.name}
+          {item.selectedVariant ? `${item.name} (${item.selectedVariant.name})` : item.name}
         </p>
 
         {/* Customization Details */}

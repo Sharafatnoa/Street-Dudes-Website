@@ -67,6 +67,30 @@ describe('areCartItemsIdentical', () => {
     const item2: AddToCartInput = { ...baseItem, addons: [] };
     expect(areCartItemsIdentical(baseItem, item2)).toBe(false);
   });
+
+  it('returns false for different selected variants (e.g. Pepsi vs Zingo)', () => {
+    const item1: AddToCartInput = {
+      ...baseItem,
+      selectedVariant: { id: 'pepsi', name: 'Pepsi', priceDelta: 0 },
+    };
+    const item2: AddToCartInput = {
+      ...baseItem,
+      selectedVariant: { id: 'zingo', name: 'Zingo', priceDelta: 0 },
+    };
+    expect(areCartItemsIdentical(item1, item2)).toBe(false);
+  });
+
+  it('returns true for identical selected variants', () => {
+    const item1: AddToCartInput = {
+      ...baseItem,
+      selectedVariant: { id: 'pepsi-max', name: 'Pepsi Max', priceDelta: 0 },
+    };
+    const item2: AddToCartInput = {
+      ...baseItem,
+      selectedVariant: { id: 'pepsi-max', name: 'Pepsi Max', priceDelta: 0 },
+    };
+    expect(areCartItemsIdentical(item1, item2)).toBe(true);
+  });
 });
 
 describe('cart functions', () => {

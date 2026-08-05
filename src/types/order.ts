@@ -56,6 +56,13 @@ export type SelectedRiceSwap = {
   priceDelta: number;
 };
 
+/** A variant swap (e.g. flavor) the customer selected */
+export type SelectedVariantSwap = {
+  id: string;
+  name: string;
+  priceDelta: number;
+};
+
 /** An addon the customer added (Extra Burgarpuck etc.) */
 export type SelectedAddon = {
   menuItemId: string;
@@ -71,6 +78,7 @@ export type CartItem = {
   basePrice: number; // Price before customizations
   proteinSwap: SelectedProteinSwap | null; // Meat alternative if chosen
   riceSwap?: SelectedRiceSwap | null; // Rice alternative if chosen
+  selectedVariant?: SelectedVariantSwap | null; // Variant/flavor if chosen
   removedIngredients: string[]; // Ingredients customer removed (free)
   addedSauce: boolean; // Whether +Sås +10kr was added
   addons: SelectedAddon[]; // Extra items added (Extra Burgarpuck etc.)
@@ -100,6 +108,7 @@ export type AddToCartInput = {
   basePrice: number;
   proteinSwap: SelectedProteinSwap | null;
   riceSwap?: SelectedRiceSwap | null;
+  selectedVariant?: SelectedVariantSwap | null;
   removedIngredients: string[];
   addedSauce: boolean;
   addons: SelectedAddon[];

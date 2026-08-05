@@ -63,7 +63,7 @@ export const menuCategories: MenuCategory[] = [
             { id: 'halloumi', name: 'Halloumi', priceDelta: 10 },
           ],
           ingredients: ['Högrev', 'Signature ris', 'Ost', 'Lök', 'Crunch', 'Streetdudes Dressing'],
-          addonIds: ['extra-protein'],
+          addonIds: ['extra-ris', 'extra-protein'],
           hasSauceAddon: true,
         },
       },
@@ -234,6 +234,11 @@ export const menuCategories: MenuCategory[] = [
         type: 'sauce_dip',
         customization: {
           proteinSwaps: [],
+          variantSwaps: [
+            { id: 'pepsi', name: 'Pepsi', priceDelta: 0 },
+            { id: 'pepsi-max', name: 'Pepsi Max', priceDelta: 0 },
+            { id: 'zingo', name: 'Zingo', priceDelta: 0 },
+          ],
           ingredients: [],
           addonIds: [],
           hasSauceAddon: false,

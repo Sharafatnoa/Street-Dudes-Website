@@ -51,7 +51,8 @@ export default function CheckoutSummary({
                 className="font-display text-white text-sm
                                 uppercase tracking-wide"
               >
-                {item.quantity}× {item.name}
+                {item.quantity}×{' '}
+                {item.selectedVariant ? `${item.name} (${item.selectedVariant.name})` : item.name}
               </span>
               <span
                 className="font-display text-brand-gold

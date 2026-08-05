@@ -33,9 +33,12 @@ export default function MenuItemCard({
   const t = useTranslations();
   const [modalOpen, setModalOpen] = useState(false);
 
+  const hasCustomization =
+    item.type === 'main' || Boolean(item.customization?.variantSwaps?.length);
+
   function handleAddClick() {
     if (!interactive || isUnavailable) return;
-    if (item.type === 'main') {
+    if (hasCustomization) {
       setModalOpen(true);
     } else {
       addSimpleItem(item.id, t(item.nameKey), item.price);
@@ -110,7 +113,7 @@ export default function MenuItemCard({
             {/* Right: add action */}
             <div className="flex items-center justify-center px-5 py-3 flex-1 bg-brand-gold/0 group-hover:bg-brand-gold transition-colors">
               <span className="font-display text-brand-gold text-sm uppercase tracking-widest font-bold group-hover:text-brand-black transition-colors">
-                {item.type === 'main' ? `+ ${t('menu.customize')}` : `+ ${t('cart.addToCart')}`}
+                {hasCustomization ? `+ ${t('menu.customize')}` : `+ ${t('cart.addToCart')}`}
               </span>
             </div>
           </button>
@@ -121,8 +124,8 @@ export default function MenuItemCard({
         )}
       </div>
 
-      {/* Customization modal — only when interactive, available, and for main items */}
-      {interactive && !isUnavailable && item.type === 'main' && (
+      {/* Customization modal — only when interactive, available, and for items with customization */}
+      {interactive && !isUnavailable && hasCustomization && (
         <ItemCustomizationModal
           item={item}
           isOpen={modalOpen}

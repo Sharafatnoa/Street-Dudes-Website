@@ -188,7 +188,10 @@ export function OrderCard({ order, thresholdMins, onStatusChange, onPrint }: Ord
                       isChecked ? 'line-through text-white/50' : ''
                     }`}
                   >
-                    {item.quantity}× {item.name}
+                    {item.quantity}×{' '}
+                    {item.selectedVariant
+                      ? `${item.name} (${item.selectedVariant.name})`
+                      : item.name}
                   </p>
                   <span
                     className={`text-xs px-1.5 py-0.5 rounded font-bold transition-colors ${

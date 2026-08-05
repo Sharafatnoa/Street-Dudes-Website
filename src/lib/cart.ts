@@ -4,6 +4,7 @@ import type {
   AddToCartInput,
   SelectedProteinSwap,
   SelectedRiceSwap,
+  SelectedVariantSwap,
   SelectedAddon,
 } from '@/types/order';
 import { EMPTY_CART } from '@/types/order';
@@ -14,6 +15,7 @@ export type ComparableCartItem = {
   menuItemId: string;
   proteinSwap?: SelectedProteinSwap | null;
   riceSwap?: SelectedRiceSwap | null;
+  selectedVariant?: SelectedVariantSwap | null;
   removedIngredients: string[];
   addedSauce: boolean;
   addons: SelectedAddon[];
@@ -48,6 +50,7 @@ export function areCartItemsIdentical(a: ComparableCartItem, b: ComparableCartIt
   if (a.menuItemId !== b.menuItemId) return false;
   if ((a.proteinSwap?.id ?? null) !== (b.proteinSwap?.id ?? null)) return false;
   if ((a.riceSwap?.id ?? null) !== (b.riceSwap?.id ?? null)) return false;
+  if ((a.selectedVariant?.id ?? null) !== (b.selectedVariant?.id ?? null)) return false;
   if (Boolean(a.addedSauce) !== Boolean(b.addedSauce)) return false;
   if ((a.specialInstructions || '') !== (b.specialInstructions || '')) return false;
   if (!areStringArraysEqual(a.removedIngredients, b.removedIngredients)) return false;
@@ -66,10 +69,11 @@ export function calculateItemTotalPrice(
   addedSauce: boolean,
   addonPrices: number[],
   riceSwapDelta: number = 0,
+  variantSwapDelta: number = 0,
 ): number {
   const saucePrice = addedSauce ? SAUCE_ADDON_PRICE : 0;
   const addonsTotal = addonPrices.reduce((sum, price) => sum + price, 0);
-  return basePrice + proteinSwapDelta + riceSwapDelta + saucePrice + addonsTotal;
+  return basePrice + proteinSwapDelta + riceSwapDelta + variantSwapDelta + saucePrice + addonsTotal;
 }
 
 /**
@@ -86,6 +90,7 @@ export function addItemToCart(cart: Cart, input: AddToCartInput): Cart {
 
   const proteinDelta = input.proteinSwap?.priceDelta ?? 0;
   const riceDelta = input.riceSwap?.priceDelta ?? 0;
+  const variantDelta = input.selectedVariant?.priceDelta ?? 0;
   const addonPrices = input.addons.map((a) => a.price);
 
   const totalPrice = calculateItemTotalPrice(
@@ -94,6 +99,7 @@ export function addItemToCart(cart: Cart, input: AddToCartInput): Cart {
     input.addedSauce,
     addonPrices,
     riceDelta,
+    variantDelta,
   );
 
   const newItem: CartItem = {
@@ -103,6 +109,7 @@ export function addItemToCart(cart: Cart, input: AddToCartInput): Cart {
     basePrice: input.basePrice,
     proteinSwap: input.proteinSwap,
     riceSwap: input.riceSwap ?? null,
+    selectedVariant: input.selectedVariant ?? null,
     removedIngredients: input.removedIngredients,
     addedSauce: input.addedSauce,
     addons: input.addons,

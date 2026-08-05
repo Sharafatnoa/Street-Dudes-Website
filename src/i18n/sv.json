@@ -212,6 +212,8 @@
   "modal": {
     "swapProtein": "Byt protein",
     "riceSwapLabel": "Byt ris",
+    "variantSwapLabel": "VÄLJ SMAK",
+    "variantSwapRequired": "Välj en smak för att fortsätta",
     "pickOne": "välj ett alternativ",
     "keepOriginal": "Behåll originalet",
     "included": "Ingår",

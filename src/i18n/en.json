@@ -212,6 +212,8 @@
   "modal": {
     "swapProtein": "Swap protein",
     "riceSwapLabel": "Swap rice",
+    "variantSwapLabel": "CHOOSE FLAVOR",
+    "variantSwapRequired": "Choose a flavor to continue",
     "pickOne": "choose one",
     "keepOriginal": "Keep original",
     "included": "Included",
