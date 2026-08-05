@@ -1,6 +1,12 @@
 /**
  * Single order card for kitchen dashboard.
- * Supports status progression on tap, recall confirmation in completed tab, and card printing.
+ * Supports status progression on tap, recall confirmation in completed tab,
+ * card printing, and per-item completion checkmarks.
+ *
+ * @param props.order - The order data object
+ * @param props.thresholdMins - Optional age warning threshold in minutes
+ * @param props.onStatusChange - Callback when order status advances
+ * @param props.onPrint - Optional callback to trigger printing
  */
 
 'use client';
@@ -40,10 +46,35 @@ const STATUS_BADGE: Record<OrderStatus, { label: string; cls: string }> = {
 
 export function OrderCard({ order, thresholdMins, onStatusChange, onPrint }: OrderCardProps) {
   const [isUpdating, setIsUpdating] = useState(false);
+  const [checkedIndices, setCheckedIndices] = useState<Set<number>>(new Set());
+  const [currentKey, setCurrentKey] = useState<string>(`${order.id}-${order.status}`);
+
+  // Reset item checkmarks if the order's id or status changes
+  if (currentKey !== `${order.id}-${order.status}`) {
+    setCurrentKey(`${order.id}-${order.status}`);
+    setCheckedIndices(new Set());
+  }
+
+  const items = order.items || [];
+  const totalItems = items.length;
+  const isAllChecked = totalItems > 0 && checkedIndices.size === totalItems;
 
   const nextStatus = STATUS_NEXT[order.status];
   const badge = STATUS_BADGE[order.status] || STATUS_BADGE.pending;
   const isDelivery = order.fulfillmentType === 'delivery';
+
+  function toggleItemCheck(e: React.MouseEvent, index: number) {
+    e.stopPropagation();
+    setCheckedIndices((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
+    });
+  }
 
   async function handleCardClick() {
     if (!nextStatus || isUpdating) return;
@@ -83,7 +114,9 @@ export function OrderCard({ order, thresholdMins, onStatusChange, onPrint }: Ord
       data-order-card-id={order.id}
       className={`rounded-lg border p-4 shadow-lg flex flex-col justify-between transition-all select-none ${
         nextStatus ? 'cursor-pointer' : ''
-      } ${CARD_STYLES[order.status]}`}
+      } ${CARD_STYLES[order.status]} ${
+        isAllChecked ? 'ring-2 ring-green-500/60 border-green-500/80 shadow-green-950/40' : ''
+      }`}
     >
       <div>
         {/* Header: Order Number + Fulfillment + Age */}
@@ -99,6 +132,11 @@ export function OrderCard({ order, thresholdMins, onStatusChange, onPrint }: Ord
             <span className={`text-xs px-2 py-0.5 rounded uppercase tracking-wider ${badge.cls}`}>
               {badge.label}
             </span>
+            {isAllChecked && (
+              <span className="text-xs px-2 py-0.5 rounded bg-green-500/20 text-green-300 border border-green-500/40 font-bold flex items-center gap-1">
+                ✓ Alla klara
+              </span>
+            )}
             {order.status !== 'completed' && (
               <OrderAgeIndicator createdAt={order.createdAt} thresholdMins={thresholdMins} />
             )}
@@ -131,33 +169,73 @@ export function OrderCard({ order, thresholdMins, onStatusChange, onPrint }: Ord
 
         {/* Items List */}
         <div className="space-y-2 mb-4">
-          {(order.items || []).map((item, idx) => {
+          {items.map((item, idx) => {
             const summary = formatItemSummary(item);
+            const isChecked = checkedIndices.has(idx);
             return (
-              <div key={idx} className="bg-black/30 p-2 rounded border border-white/5">
-                <p className="font-bold text-sm text-white">
-                  {item.quantity}× {item.name}
-                </p>
+              <div
+                key={idx}
+                onClick={(e) => toggleItemCheck(e, idx)}
+                className={`p-2 rounded border transition-all cursor-pointer select-none ${
+                  isChecked
+                    ? 'bg-black/20 border-white/5 opacity-50'
+                    : 'bg-black/30 border-white/5 hover:bg-black/40'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <p
+                    className={`font-bold text-sm text-white ${
+                      isChecked ? 'line-through text-white/50' : ''
+                    }`}
+                  >
+                    {item.quantity}× {item.name}
+                  </p>
+                  <span
+                    className={`text-xs px-1.5 py-0.5 rounded font-bold transition-colors ${
+                      isChecked
+                        ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                        : 'text-white/30 border border-white/10'
+                    }`}
+                  >
+                    {isChecked ? '✓' : '○'}
+                  </span>
+                </div>
 
                 {/* Customizations */}
-                <div className="text-xs space-y-0.5 mt-1">
+                <div
+                  className={`text-xs space-y-0.5 mt-1 ${
+                    isChecked ? 'line-through text-white/40' : ''
+                  }`}
+                >
                   {summary.proteinSwap && (
-                    <p className="text-brand-gold font-medium">({summary.proteinSwap})</p>
+                    <p className={isChecked ? 'text-white/40' : 'text-brand-gold font-medium'}>
+                      ({summary.proteinSwap})
+                    </p>
                   )}
                   {summary.riceSwap && (
-                    <p className="text-brand-gold font-medium">({summary.riceSwap})</p>
+                    <p className={isChecked ? 'text-white/40' : 'text-brand-gold font-medium'}>
+                      ({summary.riceSwap})
+                    </p>
                   )}
-                  {summary.removed && <p className="text-red-400 font-medium">{summary.removed}</p>}
+                  {summary.removed && (
+                    <p className={isChecked ? 'text-white/40' : 'text-red-400 font-medium'}>
+                      {summary.removed}
+                    </p>
+                  )}
                   {summary.addedSauce && (
-                    <p className="text-yellow-400 font-medium">{summary.addedSauce}</p>
+                    <p className={isChecked ? 'text-white/40' : 'text-yellow-400 font-medium'}>
+                      {summary.addedSauce}
+                    </p>
                   )}
                   {summary.addons.map((a, i) => (
-                    <p key={i} className="text-white/80">
+                    <p key={i} className={isChecked ? 'text-white/40' : 'text-white/80'}>
                       +{a}
                     </p>
                   ))}
                   {summary.instructions && (
-                    <p className="italic text-white/50">&quot;{summary.instructions}&quot;</p>
+                    <p className={isChecked ? 'text-white/40' : 'italic text-white/50'}>
+                      &quot;{summary.instructions}&quot;
+                    </p>
                   )}
                 </div>
               </div>
