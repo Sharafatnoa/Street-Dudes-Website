@@ -26,18 +26,25 @@ export async function PATCH(req: NextRequest) {
         : 'Vi tar en kort paus och tar inte emot beställningar just nu.';
 
     const supabase = getServerClient();
-    const { error } = await supabase
+    const { error: pauseError } = await supabase
       .from('config')
-      .update({
-        is_paused: isPaused,
-        pause_message: pauseMessage,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', 1);
+      .update({ value: isPaused ? 'true' : 'false' })
+      .eq('key', 'is_paused');
 
-    if (error) {
-      console.error('[kitchen/pause] Update error:', error);
+    if (pauseError) {
+      console.error('[kitchen/pause] Update is_paused error:', pauseError);
       return NextResponse.json({ error: 'Kunde inte uppdatera pausstatus' }, { status: 500 });
+    }
+
+    if (typeof body.pauseMessage === 'string') {
+      const { error: msgError } = await supabase
+        .from('config')
+        .update({ value: pauseMessage })
+        .eq('key', 'pause_message');
+
+      if (msgError) {
+        console.error('[kitchen/pause] Update pause_message error:', msgError);
+      }
     }
 
     return NextResponse.json({ success: true, isPaused, pauseMessage });
