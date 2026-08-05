@@ -1,12 +1,60 @@
-/**
- * Pure functions for cart operations.
- * No React, no side effects — easy to unit test.
- */
-
-import type { Cart, CartItem, AddToCartInput } from '@/types/order';
+import type {
+  Cart,
+  CartItem,
+  AddToCartInput,
+  SelectedProteinSwap,
+  SelectedRiceSwap,
+  SelectedAddon,
+} from '@/types/order';
 import { EMPTY_CART } from '@/types/order';
 
 const SAUCE_ADDON_PRICE = 10; // kr
+
+export type ComparableCartItem = {
+  menuItemId: string;
+  proteinSwap?: SelectedProteinSwap | null;
+  riceSwap?: SelectedRiceSwap | null;
+  removedIngredients: string[];
+  addedSauce: boolean;
+  addons: SelectedAddon[];
+  specialInstructions: string;
+};
+
+/**
+ * Checks if two string arrays contain the exact same elements regardless of order.
+ */
+function areStringArraysEqual(arrA: string[], arrB: string[]): boolean {
+  if (arrA.length !== arrB.length) return false;
+  const sortedA = [...arrA].sort();
+  const sortedB = [...arrB].sort();
+  return sortedA.every((val, index) => val === sortedB[index]);
+}
+
+/**
+ * Checks if two addon arrays contain the exact same selected addons regardless of order.
+ */
+function areAddonsEqual(addonsA: SelectedAddon[], addonsB: SelectedAddon[]): boolean {
+  if (addonsA.length !== addonsB.length) return false;
+  const getKey = (addon: SelectedAddon) => `${addon.menuItemId}:${addon.name}:${addon.price}`;
+  const sortedA = addonsA.map(getKey).sort();
+  const sortedB = addonsB.map(getKey).sort();
+  return sortedA.every((val, index) => val === sortedB[index]);
+}
+
+/**
+ * Determines whether two cart item inputs are identical in menuItemId and all customizations.
+ */
+export function areCartItemsIdentical(a: ComparableCartItem, b: ComparableCartItem): boolean {
+  if (a.menuItemId !== b.menuItemId) return false;
+  if ((a.proteinSwap?.id ?? null) !== (b.proteinSwap?.id ?? null)) return false;
+  if ((a.riceSwap?.id ?? null) !== (b.riceSwap?.id ?? null)) return false;
+  if (Boolean(a.addedSauce) !== Boolean(b.addedSauce)) return false;
+  if ((a.specialInstructions || '') !== (b.specialInstructions || '')) return false;
+  if (!areStringArraysEqual(a.removedIngredients, b.removedIngredients)) return false;
+  if (!areAddonsEqual(a.addons, b.addons)) return false;
+
+  return true;
+}
 
 /**
  * Calculates the total price for one cart item
@@ -26,11 +74,16 @@ export function calculateItemTotalPrice(
 
 /**
  * Adds a customized item to the cart.
- * Each call creates a new cart entry with a unique ID
- * so two versions of the same item with different
- * customizations appear as separate entries.
+ * If an identical item with the same customizations exists,
+ * increments its quantity by 1. Otherwise creates a new cart entry.
  */
 export function addItemToCart(cart: Cart, input: AddToCartInput): Cart {
+  const existing = cart.items.find((item) => areCartItemsIdentical(item, input));
+
+  if (existing) {
+    return updateItemQuantity(cart, existing.cartItemId, existing.quantity + 1);
+  }
+
   const proteinDelta = input.proteinSwap?.priceDelta ?? 0;
   const riceDelta = input.riceSwap?.priceDelta ?? 0;
   const addonPrices = input.addons.map((a) => a.price);
@@ -44,7 +97,7 @@ export function addItemToCart(cart: Cart, input: AddToCartInput): Cart {
   );
 
   const newItem: CartItem = {
-    cartItemId: `${input.menuItemId}-${Date.now()}`,
+    cartItemId: `${input.menuItemId}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
     menuItemId: input.menuItemId,
     name: input.name,
     basePrice: input.basePrice,
@@ -71,14 +124,7 @@ export function addSimpleItemToCart(
   name: string,
   price: number,
 ): Cart {
-  const existing = cart.items.find((i) => i.menuItemId === menuItemId && i.addons.length === 0);
-
-  if (existing) {
-    return updateItemQuantity(cart, existing.cartItemId, existing.quantity + 1);
-  }
-
-  const newItem: CartItem = {
-    cartItemId: `${menuItemId}-${Date.now()}`,
+  const simpleInput: AddToCartInput = {
     menuItemId,
     name,
     basePrice: price,
@@ -88,11 +134,9 @@ export function addSimpleItemToCart(
     addedSauce: false,
     addons: [],
     specialInstructions: '',
-    totalPrice: price,
-    quantity: 1,
   };
 
-  return recalculateCart([...cart.items, newItem]);
+  return addItemToCart(cart, simpleInput);
 }
 
 /**
