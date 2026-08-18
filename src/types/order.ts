@@ -4,6 +4,9 @@
  */
 export type OrderStatus = 'pending' | 'preparing' | 'ready' | 'completed';
 
+/** Valid refund status values: 'none' | 'partial' | 'full' */
+export type RefundStatus = 'none' | 'partial' | 'full';
+
 /** A single item inside an order (with full customization details) */
 export type OrderItem = CartItem;
 
@@ -30,6 +33,10 @@ export type Order = {
   total: number;
   deliveryNotes: string | null;
   allergyNotes: string | null;
+  refundStatus: RefundStatus;
+  refundAmountKr?: number | null;
+  refundReason?: string | null;
+  refundedAt?: string | null;
 };
 
 /** Input shape when creating a new order */

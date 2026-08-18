@@ -1,7 +1,7 @@
 /**
  * GET /api/admin/orders-summary
  *
- * Returns today's total orders count and total revenue in SEK (Stockholm timezone start of day).
+ * Returns today's order count, gross revenue, total refunded amount, and net revenue in SEK (Stockholm start of day).
  * Requires admin authentication cookie.
  */
 
@@ -31,7 +31,7 @@ export async function GET() {
     const supabase = getServerClient();
     const { data: orders, error } = await supabase
       .from('orders')
-      .select('total, status')
+      .select('total, status, refund_amount_kr')
       .gte('created_at', startOfDayStr);
 
     if (error) {
@@ -44,9 +44,19 @@ export async function GET() {
     );
 
     const totalOrders = validOrders.length;
-    const totalRevenueKr = validOrders.reduce((sum, o) => sum + Number(o.total || 0), 0);
+    const grossRevenueKr = validOrders.reduce((sum, o) => sum + Number(o.total || 0), 0);
+    const totalRefundedKr = validOrders.reduce(
+      (sum, o) => sum + Number(o.refund_amount_kr || 0),
+      0,
+    );
+    const netRevenueKr = grossRevenueKr - totalRefundedKr;
 
-    return NextResponse.json({ totalOrders, totalRevenueKr });
+    return NextResponse.json({
+      totalOrders,
+      grossRevenueKr,
+      totalRefundedKr,
+      netRevenueKr,
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Fel vid hämting av summering';
     return NextResponse.json({ error: message }, { status: 500 });

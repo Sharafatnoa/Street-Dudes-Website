@@ -1,7 +1,7 @@
 /**
  * GET /api/admin/orders
  *
- * Paginated order history query with date range & status filter.
+ * Paginated order history query with date range, status, and refundStatus filters.
  * Uses Supabase range/limit for database-level pagination.
  * Requires admin authentication cookie.
  */
@@ -26,6 +26,7 @@ export async function GET(req: NextRequest) {
     const fromParam = searchParams.get('from');
     const toParam = searchParams.get('to');
     const statusParam = searchParams.get('status');
+    const refundStatusParam = searchParams.get('refundStatus');
     const pageParam = searchParams.get('page');
     const pageSizeParam = searchParams.get('pageSize');
 
@@ -65,6 +66,14 @@ export async function GET(req: NextRequest) {
       query = query.eq('status', statusParam.toLowerCase());
     }
 
+    if (refundStatusParam && refundStatusParam !== 'all') {
+      if (refundStatusParam === 'refunded') {
+        query = query.neq('refund_status', 'none');
+      } else {
+        query = query.eq('refund_status', refundStatusParam.toLowerCase());
+      }
+    }
+
     const startIndex = (page - 1) * pageSize;
     const endIndex = page * pageSize - 1;
 
@@ -99,6 +108,10 @@ export async function GET(req: NextRequest) {
       total: o.total || 0,
       deliveryNotes: o.delivery_notes,
       allergyNotes: o.allergy_notes,
+      refundStatus: o.refund_status || 'none',
+      refundAmountKr: o.refund_amount_kr || null,
+      refundReason: o.refund_reason || null,
+      refundedAt: o.refunded_at || null,
     }));
 
     return NextResponse.json({
