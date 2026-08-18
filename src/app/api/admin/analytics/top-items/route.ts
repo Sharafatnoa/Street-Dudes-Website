@@ -13,6 +13,7 @@ import { startOfDay, endOfDay, subDays, parseISO } from 'date-fns';
 import { toZonedTime, formatInTimeZone } from 'date-fns-tz';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const STOCKHOLM_TZ = 'Europe/Stockholm';
 
@@ -77,7 +78,14 @@ export async function GET(req: NextRequest) {
       .sort((a, b) => b.totalQuantity - a.totalQuantity)
       .slice(0, 10);
 
-    return NextResponse.json({ data: sortedItems });
+    return NextResponse.json(
+      { data: sortedItems },
+      {
+        headers: {
+          'Cache-Control': 'no-store, max-age=0, must-revalidate',
+        },
+      },
+    );
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Fel vid analys av populära rätter';
     return NextResponse.json({ error: message }, { status: 500 });

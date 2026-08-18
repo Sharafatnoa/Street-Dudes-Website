@@ -13,6 +13,7 @@ import { startOfDay, endOfDay, subDays, getDay, getHours, parseISO } from 'date-
 import { toZonedTime, formatInTimeZone } from 'date-fns-tz';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const STOCKHOLM_TZ = 'Europe/Stockholm';
 
@@ -77,7 +78,14 @@ export async function GET(req: NextRequest) {
       count,
     }));
 
-    return NextResponse.json({ byDayOfWeek, byHour });
+    return NextResponse.json(
+      { byDayOfWeek, byHour },
+      {
+        headers: {
+          'Cache-Control': 'no-store, max-age=0, must-revalidate',
+        },
+      },
+    );
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Fel vid analys av toppar';
     return NextResponse.json({ error: message }, { status: 500 });

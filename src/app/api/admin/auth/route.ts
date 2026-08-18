@@ -9,10 +9,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isAdminAuthenticated, setAdminAuthCookie, verifyAdminPin } from '@/lib/adminAuth';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET() {
   const authenticated = isAdminAuthenticated();
-  return NextResponse.json({ authenticated });
+  return NextResponse.json(
+    { authenticated },
+    {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0, must-revalidate',
+      },
+    },
+  );
 }
 
 export async function POST(req: NextRequest) {

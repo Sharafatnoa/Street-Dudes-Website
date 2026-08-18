@@ -12,6 +12,7 @@ import { getServerClient } from '@/lib/supabase';
 import { executeRefund } from '@/lib/refund';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 type RouteParams = {
   params: { id: string };

@@ -13,6 +13,7 @@ import { startOfDay, endOfDay, subDays, parseISO } from 'date-fns';
 import { toZonedTime, formatInTimeZone } from 'date-fns-tz';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const STOCKHOLM_TZ = 'Europe/Stockholm';
 
@@ -114,13 +115,20 @@ export async function GET(req: NextRequest) {
       refundedAt: o.refunded_at || null,
     }));
 
-    return NextResponse.json({
-      orders,
-      totalCount,
-      page,
-      pageSize,
-      totalPages,
-    });
+    return NextResponse.json(
+      {
+        orders,
+        totalCount,
+        page,
+        pageSize,
+        totalPages,
+      },
+      {
+        headers: {
+          'Cache-Control': 'no-store, max-age=0, must-revalidate',
+        },
+      },
+    );
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Fel vid hämting av ordrar';
     return NextResponse.json({ error: message }, { status: 500 });

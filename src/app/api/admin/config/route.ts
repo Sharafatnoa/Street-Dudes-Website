@@ -12,6 +12,7 @@ import { getConfig } from '@/lib/getConfig';
 import { getServerClient } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const ALLOWED_CONFIG_KEYS = [
   'delivery_radius_km',
@@ -42,7 +43,14 @@ export async function GET() {
 
   try {
     const config = await getConfig();
-    return NextResponse.json({ config });
+    return NextResponse.json(
+      { config },
+      {
+        headers: {
+          'Cache-Control': 'no-store, max-age=0, must-revalidate',
+        },
+      },
+    );
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Kunde inte hämta inställningar';
     return NextResponse.json({ error: message }, { status: 500 });
