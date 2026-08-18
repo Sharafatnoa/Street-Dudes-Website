@@ -5,12 +5,16 @@ import { useTranslations, useLocale } from 'next-intl';
 import { LanguageToggle } from './ui/LanguageToggle';
 import Link from 'next/link';
 
+type NavbarProps = {
+  onlineOrderingEnabled?: boolean;
+};
+
 /**
  * Navbar component providing sticky primary header navigation, language toggle, and ORDER ONLINE action button.
  *
  * WHY: Delivers Phase 1 central header navigation layout linking to the dedicated order page.
  */
-export function Navbar() {
+export function Navbar({ onlineOrderingEnabled = true }: NavbarProps) {
   const t = useTranslations();
   const locale = useLocale();
 
@@ -58,12 +62,14 @@ export function Navbar() {
         {/* Action Controls - Right */}
         <div className="flex items-center gap-4">
           <LanguageToggle />
-          <Link
-            href={`/${locale}/order`}
-            className="bg-brand-gold text-brand-black px-4 py-2 font-display text-sm uppercase tracking-widest rounded-sm hover:bg-yellow-400 transition-colors font-bold whitespace-nowrap"
-          >
-            {t('nav.orderOnline')}
-          </Link>
+          {onlineOrderingEnabled && (
+            <Link
+              href={`/${locale}/order`}
+              className="bg-brand-gold text-brand-black px-4 py-2 font-display text-sm uppercase tracking-widest rounded-sm hover:bg-yellow-400 transition-colors font-bold whitespace-nowrap"
+            >
+              {t('nav.orderOnline')}
+            </Link>
+          )}
         </div>
       </div>
     </nav>

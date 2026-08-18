@@ -26,6 +26,7 @@ const ALLOWED_CONFIG_KEYS = [
   'weekend_close',
   'is_paused',
   'pause_message',
+  'online_ordering_enabled',
 ] as const;
 
 type AllowedConfigKey = (typeof ALLOWED_CONFIG_KEYS)[number];

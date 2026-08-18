@@ -1,6 +1,6 @@
 /**
- * Restaurant open/pause control card.
- * Uses getRestaurantStatus() and updates is_paused & pause_message via PATCH /api/admin/config.
+ * Restaurant open/pause & online ordering control card.
+ * Updates is_paused, pause_message & online_ordering_enabled via PATCH /api/admin/config.
  */
 
 'use client';
@@ -28,6 +28,27 @@ export function RestaurantControlCard({ config, onConfigChange }: RestaurantCont
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key: 'is_paused', value: config.isPaused ? 'false' : 'true' }),
+      });
+      if (res.ok) {
+        onConfigChange();
+      }
+    } catch {
+      // error handled silently
+    } finally {
+      setIsUpdating(false);
+    }
+  }
+
+  async function toggleOnlineOrdering() {
+    setIsUpdating(true);
+    try {
+      const res = await fetch('/api/admin/config', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          key: 'online_ordering_enabled',
+          value: config.onlineOrderingEnabled ? 'false' : 'true',
+        }),
       });
       if (res.ok) {
         onConfigChange();
@@ -82,6 +103,33 @@ export function RestaurantControlCard({ config, onConfigChange }: RestaurantCont
         </span>
       </div>
 
+      {/* Online Ordering Kill Switch Toggle */}
+      <div className="pt-2 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold text-white">Onlinebeställning (Huvudbrytare)</p>
+          <p className="text-[11px] text-white/40">
+            Döljer och spärrar hela beställningssystemet i restaurangen
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={toggleOnlineOrdering}
+          disabled={isUpdating}
+          className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all disabled:opacity-50 ${
+            config.onlineOrderingEnabled
+              ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
+              : 'bg-red-600 hover:bg-red-500 text-white'
+          }`}
+        >
+          {isUpdating
+            ? '...'
+            : config.onlineOrderingEnabled
+              ? 'ONLINEBESTÄLLNING: PÅ'
+              : 'ONLINEBESTÄLLNING: AV'}
+        </button>
+      </div>
+
+      {/* Temporary Pause Toggle */}
       <div className="pt-2 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
           <p className="text-xs font-semibold text-white">Pausa beställningar</p>
@@ -103,6 +151,7 @@ export function RestaurantControlCard({ config, onConfigChange }: RestaurantCont
         </button>
       </div>
 
+      {/* Pause Message Input */}
       <div className="space-y-2 pt-2 border-t border-white/10">
         <label className="text-xs font-semibold text-white/70 block">
           Pausmeddelande till kunder

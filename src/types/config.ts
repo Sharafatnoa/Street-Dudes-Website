@@ -27,4 +27,5 @@ export type AppConfig = {
   weekdayClose: string;
   weekendOpen: string;
   weekendClose: string;
+  onlineOrderingEnabled: boolean;
 };

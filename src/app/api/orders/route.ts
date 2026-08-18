@@ -182,6 +182,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // ── 3.5 Check online ordering master switch ───────────────────────────────
+
+  if (!config.onlineOrderingEnabled) {
+    return NextResponse.json(
+      { error: 'Onlinebeställning är inte tillgänglig just nu.' },
+      { status: 400 },
+    );
+  }
+
   // ── 4. Check restaurant is open ───────────────────────────────────────────
 
   if (!isAcceptingOrders(config)) {

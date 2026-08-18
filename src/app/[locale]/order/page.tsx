@@ -1,32 +1,42 @@
-'use client';
+/**
+ * Server-rendered Order Page route.
+ * Performs server-side check for onlineOrderingEnabled before rendering interactive ordering UI.
+ */
 
-import { useState } from 'react';
-import MenuPage from '@/components/menu/MenuPage';
-import OrderNavbar from '@/components/layout/OrderNavbar';
-import FloatingCartBar from '@/components/cart/FloatingCartBar';
-import CartDrawer from '@/components/cart/CartDrawer';
-import RestaurantStatusBanner, { type StatusData } from '@/components/menu/RestaurantStatusBanner';
+import { getConfig } from '@/lib/getConfig';
+import { Navbar } from '@/components/Navbar';
+import { InteractiveOrderPage } from '@/components/order/InteractiveOrderPage';
 
-export default function OrderPage() {
-  const [cartOpen, setCartOpen] = useState(false);
-  const [isOrderingOpen, setIsOrderingOpen] = useState(true);
-  const [unavailableIds, setUnavailableIds] = useState<string[]>([]);
+export const dynamic = 'force-dynamic';
 
-  function handleStatusLoad(data: StatusData) {
-    setIsOrderingOpen(data.state === 'OPEN');
-    setUnavailableIds(data.unavailableItemIds);
+export default async function OrderPage() {
+  let onlineOrderingEnabled = true;
+  try {
+    const config = await getConfig();
+    onlineOrderingEnabled = config.onlineOrderingEnabled;
+  } catch {
+    onlineOrderingEnabled = true;
   }
 
-  return (
-    <>
-      <OrderNavbar onCartOpen={() => setCartOpen(true)} />
-      <main className="min-h-screen bg-brand-black pt-16 pb-24">
-        {/* pb-24 gives space so content is not hidden behind the bar */}
-        <RestaurantStatusBanner onStatusLoad={handleStatusLoad} />
-        <MenuPage interactive={isOrderingOpen} unavailableItemIds={unavailableIds} />
-      </main>
-      <FloatingCartBar onOpen={() => setCartOpen(true)} />
-      <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
-    </>
-  );
+  if (!onlineOrderingEnabled) {
+    return (
+      <div className="min-h-screen bg-[#0b0b0b] text-white flex flex-col">
+        <Navbar onlineOrderingEnabled={false} />
+        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+          <div className="bg-[#141414] border border-white/10 p-8 rounded-xl max-w-md w-full space-y-4 shadow-2xl">
+            <div className="text-4xl">🚫</div>
+            <h1 className="font-display text-2xl font-bold text-brand-gold uppercase tracking-wider">
+              ONLINEBESTÄLLNING EJ TILLGÄNGLIG
+            </h1>
+            <p className="text-sm text-white/70">
+              Onlinebeställning är inte tillgänglig just nu. Välkommen att besöka oss direkt i
+              restaurangen!
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return <InteractiveOrderPage />;
 }

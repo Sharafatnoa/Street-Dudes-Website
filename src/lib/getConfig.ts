@@ -51,5 +51,6 @@ export async function getConfig(): Promise<AppConfig> {
     weekdayClose: map['weekday_close'],
     weekendOpen: map['weekend_open'],
     weekendClose: map['weekend_close'],
+    onlineOrderingEnabled: map['online_ordering_enabled'] !== 'false',
   };
 }

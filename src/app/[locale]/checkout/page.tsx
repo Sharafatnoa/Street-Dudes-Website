@@ -1,71 +1,38 @@
 /**
- * Checkout page.
- * Redirects to /order if cart is empty.
- * Layout: summary on top (mobile), side by side (desktop).
+ * Server-rendered Checkout Page route.
+ * Performs server-side check for onlineOrderingEnabled before rendering checkout UI.
  */
 
-'use client';
+import { getConfig } from '@/lib/getConfig';
+import { InteractiveCheckoutPage } from '@/components/checkout/InteractiveCheckoutPage';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useCart } from '@/context/CartContext';
-import { useLocale } from 'next-intl';
-import CheckoutForm from '@/components/checkout/CheckoutForm';
-import CheckoutSummary from '@/components/checkout/CheckoutSummary';
+export const dynamic = 'force-dynamic';
 
-export default function CheckoutPage() {
-  const { cart } = useCart();
-  const router = useRouter();
-  const locale = useLocale();
+export default async function CheckoutPage() {
+  let onlineOrderingEnabled = true;
+  try {
+    const config = await getConfig();
+    onlineOrderingEnabled = config.onlineOrderingEnabled;
+  } catch {
+    onlineOrderingEnabled = true;
+  }
 
-  // Redirect to order page if cart is empty
-  useEffect(() => {
-    if (cart.items.length === 0) {
-      router.replace(`/${locale}/order`);
-    }
-  }, [cart.items.length, router, locale]);
-
-  if (cart.items.length === 0) return null;
-
-  return (
-    <div className="min-h-screen bg-brand-black">
-      {/* Header */}
-      <header
-        className="sticky top-0 z-20 bg-brand-black
-                         border-b border-white/10 px-6 py-4
-                         flex items-center gap-4"
-      >
-        <button
-          onClick={() => router.back()}
-          className="text-white/50 hover:text-white
-                     transition-colors text-sm
-                     flex items-center gap-2"
-        >
-          ← Tillbaka
-        </button>
-        <h1
-          className="font-display text-brand-gold text-xl
-                       uppercase tracking-widest"
-        >
-          Kassa
-        </h1>
-      </header>
-
-      {/* Content — stacked on mobile, side by side on desktop */}
-      <div
-        className="max-w-4xl mx-auto px-4 py-6
-                      flex flex-col lg:flex-row gap-6"
-      >
-        {/* Order summary — top on mobile, right on desktop */}
-        <div className="lg:order-2 lg:w-80 lg:shrink-0">
-          <CheckoutSummary />
-        </div>
-
-        {/* Checkout form — bottom on mobile, left on desktop */}
-        <div className="lg:order-1 flex-1">
-          <CheckoutForm />
+  if (!onlineOrderingEnabled) {
+    return (
+      <div className="min-h-screen bg-[#0b0b0b] text-white flex items-center justify-center p-6 text-center">
+        <div className="bg-[#141414] border border-white/10 p-8 rounded-xl max-w-md w-full space-y-4 shadow-2xl">
+          <div className="text-4xl">🚫</div>
+          <h1 className="font-display text-2xl font-bold text-brand-gold uppercase tracking-wider">
+            ONLINEBESTÄLLNING EJ TILLGÄNGLIG
+          </h1>
+          <p className="text-sm text-white/70">
+            Onlinebeställning är inte tillgänglig just nu. Välkommen att besöka oss direkt i
+            restaurangen!
+          </p>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  return <InteractiveCheckoutPage />;
 }

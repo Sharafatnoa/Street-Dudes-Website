@@ -1,9 +1,10 @@
 import React from 'react';
-import { useTranslations } from 'next-intl';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Navbar } from '@/components/Navbar';
 import { MenuPage } from '@/components/MenuPage';
 import { Footer } from '@/components/layout/Footer';
+
+import { getConfig } from '@/lib/getConfig';
 
 type PageProps = {
   params: { locale: string };
@@ -16,16 +17,23 @@ type PageProps = {
  *
  * WHY: Orchestrates the core landing layout without housing internal component logic.
  */
-export default function HomePage({ params: { locale } }: PageProps) {
+export default async function HomePage({ params: { locale } }: PageProps) {
   // Enable localization context for page rendering
   setRequestLocale(locale);
 
-  const t = useTranslations();
+  const t = await getTranslations({ locale });
+  let onlineOrderingEnabled = true;
+  try {
+    const config = await getConfig();
+    onlineOrderingEnabled = config.onlineOrderingEnabled;
+  } catch {
+    // Default to true if config fetch fails
+  }
 
   return (
     <main className="min-h-screen bg-zinc-950 flex flex-col">
       {/* Sticky Main Header Navigation */}
-      <Navbar />
+      <Navbar onlineOrderingEnabled={onlineOrderingEnabled} />
 
       {/* Hero Presentation Header */}
       <section className="bg-zinc-950/40 border-b border-zinc-900/50 pt-20 pb-8 px-4 text-center flex flex-col justify-center items-center gap-6">
