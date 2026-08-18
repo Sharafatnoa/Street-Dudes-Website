@@ -76,7 +76,31 @@ export async function PATCH(req: NextRequest) {
     const valString = value !== undefined && value !== null ? String(value) : '';
 
     const supabase = getServerClient();
-    const { error } = await supabase.from('config').update({ value: valString }).eq('key', key);
+    // Upsert: creates the row if it doesn't exist yet (INSERT … ON CONFLICT (key)
+    // DO UPDATE SET value). This is safe because `key` is already validated against
+    // the explicit allowlist above. Prevents the silent-no-op bug where update()
+    // matches 0 rows and returns success without writing anything.
+    // The config table has a NOT NULL `description` column, so we must supply one
+    // for the INSERT case. On conflict the existing description is preserved since
+    // Supabase's upsert merges only the supplied columns.
+    const DESCRIPTIONS: Record<AllowedConfigKey, string> = {
+      delivery_radius_km: 'Maximum delivery distance in kilometres',
+      delivery_fee_kr: 'Standard delivery fee in Swedish kronor',
+      free_delivery_threshold_kr: 'Order value above which delivery is free',
+      min_order_kr: 'Minimum order amount in Swedish kronor',
+      weekday_open: 'Weekday opening time',
+      weekday_break_start: 'Weekday break start time',
+      weekday_break_end: 'Weekday break end time',
+      weekday_close: 'Weekday closing time',
+      weekend_open: 'Weekend opening time',
+      weekend_close: 'Weekend closing time',
+      is_paused: 'Whether ordering is temporarily paused',
+      pause_message: 'Message shown while ordering is paused',
+      online_ordering_enabled: 'Master toggle for online ordering',
+    };
+    const { error } = await supabase
+      .from('config')
+      .upsert({ key, value: valString, description: DESCRIPTIONS[key] }, { onConflict: 'key' });
 
     if (error) {
       console.error('[admin/config] Supabase update error:', error);
