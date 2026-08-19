@@ -37,6 +37,7 @@ export type Order = {
   refundAmountKr?: number | null;
   refundReason?: string | null;
   refundedAt?: string | null;
+  locale?: 'sv' | 'en';
 };
 
 /** Input shape when creating a new order */
@@ -47,6 +48,7 @@ export type CreateOrderInput = {
   deliveryAddress?: string;
   items: OrderItem[];
   notes?: string;
+  locale?: 'sv' | 'en';
 };
 
 /** A protein swap the customer selected */

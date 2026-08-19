@@ -92,6 +92,7 @@ export default function CheckoutForm() {
           items: cart.items,
           deliveryNotes: form.deliveryNotes.trim(),
           allergyNotes: form.allergyNotes.trim(),
+          locale,
         }),
       });
 

@@ -15,13 +15,14 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { sendOrderConfirmationEmail } from '@/lib/email';
 import { getConfig } from '@/lib/getConfig';
 import { getRestaurantStatus, isAcceptingOrders } from '@/lib/openingHours';
 import { geocodeAddress } from '@/lib/geocode';
 import { calculateDistanceKm } from '@/lib/haversine';
 import { getServerClient } from '@/lib/supabase';
 import { menuCategories } from '@/data/menu';
-import type { CartItem } from '@/types/order';
+import type { CartItem, Order } from '@/types/order';
 
 // getConfig() must always reflect the latest Supabase values so that
 // opening hours, delivery radius, and fee changes take effect immediately.
@@ -44,6 +45,7 @@ type OrderRequestBody = {
   items: CartItem[];
   deliveryNotes: string;
   allergyNotes: string;
+  locale?: 'sv' | 'en';
 };
 
 // ── Price recalculation ───────────────────────────────────────────────────────
@@ -140,6 +142,7 @@ export async function POST(request: NextRequest) {
     items,
     deliveryNotes,
     allergyNotes,
+    locale,
   } = body;
 
   // ── 2. Validate required fields ───────────────────────────────────────────
@@ -313,7 +316,43 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // ── 8. Return success ─────────────────────────────────────────────────────
+  // ── 8. Send Confirmation Email (Non-blocking) ─────────────────────────────
+
+  // Construct a partial order with necessary info for the email template
+  const orderForEmail: Order = {
+    id: insertedOrder.id,
+    orderNumber: insertedOrder.order_number,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    status: 'pending' as const,
+    customerName: customerName.trim(),
+    customerEmail: customerEmail.trim(),
+    customerPhone: customerPhone?.trim() ?? '',
+    fulfillmentType,
+    deliveryAddress: deliveryAddress ?? null,
+    deliveryApartment: deliveryApartment ?? null,
+    deliveryPostalCode: deliveryPostalCode ?? null,
+    deliveryCity: deliveryCity ?? null,
+    deliveryLat: deliveryLat ?? null,
+    deliveryLng: deliveryLng ?? null,
+    items,
+    subtotal: serverSubtotal,
+    deliveryFee: serverDeliveryFee,
+    total: serverTotal,
+    deliveryNotes: deliveryNotes?.trim() || null,
+    allergyNotes: allergyNotes?.trim() || null,
+    refundStatus: 'none' as const,
+    locale: locale || 'sv',
+  };
+
+  try {
+    await sendOrderConfirmationEmail(orderForEmail);
+  } catch (error) {
+    // Already handled in sendOrderConfirmationEmail, but safety catch here just in case
+    console.error('[orders] Unexpected error from sendOrderConfirmationEmail:', error);
+  }
+
+  // ── 9. Return success ─────────────────────────────────────────────────────
 
   return NextResponse.json({
     orderId: insertedOrder.id,
