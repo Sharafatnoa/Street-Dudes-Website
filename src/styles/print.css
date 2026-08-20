@@ -1,65 +1,59 @@
 /**
  * Print styles for Kitchen Dashboard card printing.
- * When data-printing-order-id is set on body, hides everything
- * except the specific order card being printed.
+ * When body has [data-printing-order-id] set, hides the entire page
+ * and shows ONLY the order card marked with the `.printing-target` class.
+ *
+ * The JS handler (triggerPrint) sets the attribute + class before calling
+ * window.print(), and cleans up on the `afterprint` event.
  */
 
 @media print {
-  /* Hide headers, navigation, buttons, and other cards */
+  /* ── Step 1: Hide EVERYTHING on the page ── */
   body[data-printing-order-id] * {
     visibility: hidden !important;
   }
 
-  /* Show only the target card and its children */
-  body[data-printing-order-id] [data-order-card-id] {
-    visibility: hidden !important;
-  }
-
-  body[data-printing-order-id] [data-order-card-id] * {
-    visibility: hidden !important;
-  }
-
-  /* Match card ID */
+  /* Also hide all order cards via display:none so they don't take space */
   body[data-printing-order-id] [data-order-card-id] {
     display: none !important;
   }
 
-  /* Selected card to print */
-  body[data-printing-order-id] div[data-order-card-id] {
+  /* ── Step 2: Show ONLY the targeted card ── */
+  body[data-printing-order-id] [data-order-card-id].printing-target {
     display: block !important;
+    visibility: visible !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    background: white !important;
+    color: black !important;
+    border: 2px solid black !important;
+    padding: 15px !important;
+    z-index: 99999 !important;
+    box-shadow: none !important;
   }
 
-  /* Reset layout for single card receipt printing */
-  @page {
-    size: auto;
-    margin: 10mm;
+  /* Make ALL children of the targeted card visible */
+  body[data-printing-order-id] [data-order-card-id].printing-target * {
+    visibility: visible !important;
+    color: black !important;
   }
 
-  /* Force printable card to be visible in black and white high contrast */
+  /* ── Step 3: Hide buttons on the printed receipt ── */
+  body[data-printing-order-id] [data-order-card-id].printing-target button {
+    display: none !important;
+  }
+
+  /* ── Step 4: Force body background for clean receipt ── */
   body[data-printing-order-id] {
     background: white !important;
     color: black !important;
   }
 
-  body[data-printing-order-id] [data-order-card-id]:nth-child(n) {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    width: 100% !important;
-    visibility: visible !important;
-    background: white !important;
-    color: black !important;
-    border: 2px solid black !important;
-    padding: 15px !important;
-  }
-
-  body[data-printing-order-id] [data-order-card-id]:nth-child(n) * {
-    visibility: visible !important;
-    color: black !important;
-  }
-
-  /* Hide print/recall buttons on the printed receipt */
-  body[data-printing-order-id] [data-order-card-id] button {
-    display: none !important;
+  /* ── Step 5: Page setup for receipt ── */
+  @page {
+    size: auto;
+    margin: 10mm;
   }
 }

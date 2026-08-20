@@ -156,8 +156,13 @@ export function OrderCard({ order, thresholdMins, onStatusChange, onPrint }: Ord
         {/* Customer info & Delivery Notes */}
         <div className="mb-3 text-xs text-white/60">
           <p className="text-white font-medium">{order.customerName}</p>
+          {order.customerPhone && (
+            <p className="text-white/70 mt-0.5">
+              📞 {order.customerPhone}
+            </p>
+          )}
           {isDelivery && order.deliveryAddress && (
-            <p className="text-white/70">
+            <p className="text-white/70 mt-1">
               📍 {order.deliveryAddress}{' '}
               {order.deliveryApartment ? `(${order.deliveryApartment})` : ''}
             </p>

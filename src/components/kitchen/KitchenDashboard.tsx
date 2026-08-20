@@ -44,12 +44,26 @@ export function KitchenDashboard({
   }, []);
 
   const triggerPrint = useCallback((order: Order) => {
-    try {
-      document.body.setAttribute('data-printing-order-id', order.id);
-      window.print();
-    } finally {
+    // Find the specific card element in the DOM
+    const cardEl = document.querySelector(
+      `[data-order-card-id="${order.id}"]`,
+    ) as HTMLElement | null;
+
+    if (!cardEl) return;
+
+    // Mark the body and the specific card for the @media print CSS
+    document.body.setAttribute('data-printing-order-id', order.id);
+    cardEl.classList.add('printing-target');
+
+    // Clean up after print dialog closes (works for both print & cancel)
+    function cleanup() {
       document.body.removeAttribute('data-printing-order-id');
+      cardEl?.classList.remove('printing-target');
+      window.removeEventListener('afterprint', cleanup);
     }
+    window.addEventListener('afterprint', cleanup);
+
+    window.print();
   }, []);
 
   const handleNewOrder = useCallback(
