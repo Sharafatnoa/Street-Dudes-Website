@@ -7,6 +7,9 @@ export type OrderStatus = 'pending' | 'preparing' | 'ready' | 'completed';
 /** Valid refund status values: 'none' | 'partial' | 'full' */
 export type RefundStatus = 'none' | 'partial' | 'full';
 
+/** Print queue status tracked for the external ESC/POS kitchen bridge */
+export type PrintStatus = 'none' | 'pending' | 'printing' | 'printed' | 'failed';
+
 /** A single item inside an order (with full customization details) */
 export type OrderItem = CartItem;
 
@@ -38,6 +41,8 @@ export type Order = {
   refundReason?: string | null;
   refundedAt?: string | null;
   locale?: 'sv' | 'en';
+  printStatus?: PrintStatus;
+  printError?: string | null;
 };
 
 /** Input shape when creating a new order */

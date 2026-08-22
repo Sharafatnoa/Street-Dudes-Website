@@ -60,6 +60,8 @@ export async function GET() {
     total: o.total || 0,
     deliveryNotes: o.delivery_notes,
     allergyNotes: o.allergy_notes,
+    printStatus: String(o.print_status || 'none'),
+    printError: o.print_error || null,
   }));
 
   return NextResponse.json({ orders });

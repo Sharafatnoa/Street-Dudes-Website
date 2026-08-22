@@ -12,7 +12,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { Order, OrderStatus } from '@/types/order';
+import type { Order, OrderStatus, PrintStatus } from '@/types/order';
 import { formatItemSummary } from '@/lib/formatItemSummary';
 import { OrderAgeIndicator } from './OrderAgeIndicator';
 
@@ -46,6 +46,7 @@ const STATUS_BADGE: Record<OrderStatus, { label: string; cls: string }> = {
 
 export function OrderCard({ order, thresholdMins, onStatusChange, onPrint }: OrderCardProps) {
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isReprinting, setIsReprinting] = useState(false);
   const [checkedIndices, setCheckedIndices] = useState<Set<number>>(new Set());
   const [currentKey, setCurrentKey] = useState<string>(`${order.id}-${order.status}`);
 
@@ -108,6 +109,28 @@ export function OrderCard({ order, thresholdMins, onStatusChange, onPrint }: Ord
     if (onPrint) onPrint(order);
   }
 
+  async function handleReprintRequest(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (isReprinting) return;
+    setIsReprinting(true);
+    try {
+      const res = await fetch('/api/kitchen/print-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId: order.id }),
+      });
+      if (!res.ok) {
+        alert('Kunde inte köa utskrift.');
+      }
+    } catch {
+      alert('Nätverksfel vid utskrift.');
+    } finally {
+      setIsReprinting(false);
+    }
+  }
+
+  const printStatus: PrintStatus = order.printStatus || 'none';
+
   return (
     <div
       onClick={handleCardClick}
@@ -144,6 +167,36 @@ export function OrderCard({ order, thresholdMins, onStatusChange, onPrint }: Ord
         </div>
 
         {/* Allergy Warning Box (impossible to miss) */}
+        {/* Kitchen printer status indicator */}
+        {printStatus !== 'none' && (
+          <div className="mb-3 flex items-center gap-2">
+            {(printStatus === 'pending' || printStatus === 'printing') && (
+              <span className="text-xs text-white/40 italic flex items-center gap-1">
+                <span className="inline-block w-2 h-2 rounded-full bg-white/30 animate-pulse" />
+                Skriver ut…
+              </span>
+            )}
+            {printStatus === 'printed' && (
+              <span className="text-xs text-green-400 flex items-center gap-1 font-medium">
+                ✓ Utskriven
+              </span>
+            )}
+            {printStatus === 'failed' && (
+              <button
+                onClick={handleReprintRequest}
+                className="text-xs text-red-400 font-bold flex items-center gap-1 hover:text-red-300 transition-colors"
+              >
+                ⚠ Utskrift misslyckades
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Print error detail (shown only on failure) */}
+        {printStatus === 'failed' && order.printError && (
+          <p className="mb-3 text-xs text-white/40 italic">Fel: {order.printError}</p>
+        )}
+
         {order.allergyNotes && (
           <div className="mb-3 p-2.5 rounded border-2 border-red-500 bg-red-500/20 text-red-300 animate-pulse">
             <p className="font-bold text-xs uppercase tracking-wider flex items-center gap-1">
@@ -266,12 +319,21 @@ export function OrderCard({ order, thresholdMins, onStatusChange, onPrint }: Ord
           </span>
         )}
 
-        <button
-          onClick={handlePrintClick}
-          className="px-3 py-1 bg-white/10 hover:bg-white/20 text-white rounded text-xs transition-colors flex items-center gap-1 font-medium ml-auto"
-        >
-          🖨️ Skriv ut
-        </button>
+        <div className="flex items-center gap-2 ml-auto">
+          <button
+            onClick={handleReprintRequest}
+            disabled={isReprinting}
+            className="px-3 py-1 bg-brand-gold/20 hover:bg-brand-gold/30 text-brand-gold rounded text-xs transition-colors flex items-center gap-1 font-medium disabled:opacity-50"
+          >
+            🖨️ Skriv ut igen
+          </button>
+          <button
+            onClick={handlePrintClick}
+            className="px-3 py-1 bg-white/10 hover:bg-white/20 text-white rounded text-xs transition-colors flex items-center gap-1 font-medium"
+          >
+            🖨️ Skriv ut
+          </button>
+        </div>
       </div>
     </div>
   );

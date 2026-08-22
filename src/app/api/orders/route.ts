@@ -303,6 +303,8 @@ export async function POST(request: NextRequest) {
       total: serverTotal,
       delivery_notes: deliveryNotes?.trim() || null,
       allergy_notes: allergyNotes?.trim() || null,
+      print_status: 'pending',
+      print_requested_at: new Date().toISOString(),
     })
     .select('id, order_number')
     .single();
