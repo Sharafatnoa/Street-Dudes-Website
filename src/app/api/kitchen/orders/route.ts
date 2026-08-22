@@ -8,24 +8,16 @@
 import { NextResponse } from 'next/server';
 import { isKitchenAuthenticated } from '@/lib/kitchenAuth';
 import { getServerClient } from '@/lib/supabase';
-import { startOfDay } from 'date-fns';
-import { toZonedTime, formatInTimeZone } from 'date-fns-tz';
+import { stockholmDateString, stockholmStartOfDay } from '@/lib/stockholmTime';
 
 export const dynamic = 'force-dynamic';
-
-const STOCKHOLM_TZ = 'Europe/Stockholm';
 
 export async function GET() {
   if (!isKitchenAuthenticated()) {
     return NextResponse.json({ error: 'Obehörig' }, { status: 401 });
   }
 
-  const nowStockholm = toZonedTime(new Date(), STOCKHOLM_TZ);
-  const startOfDayStr = formatInTimeZone(
-    startOfDay(nowStockholm),
-    STOCKHOLM_TZ,
-    "yyyy-MM-dd'T'HH:mm:ssXXX",
-  );
+  const startOfDayStr = stockholmStartOfDay(stockholmDateString());
 
   const supabase = getServerClient();
   const { data: rawOrders, error } = await supabase

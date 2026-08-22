@@ -9,13 +9,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdminAuthenticated } from '@/lib/adminAuth';
 import { getServerClient } from '@/lib/supabase';
-import { startOfDay, endOfDay, subDays, parseISO } from 'date-fns';
-import { toZonedTime, formatInTimeZone } from 'date-fns-tz';
+import { parseISO } from 'date-fns';
+import {
+  stockholmDateString,
+  stockholmDateStringDaysAgo,
+  stockholmStartOfDay,
+  stockholmEndOfDay,
+} from '@/lib/stockholmTime';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-
-const STOCKHOLM_TZ = 'Europe/Stockholm';
 
 export async function GET(req: NextRequest) {
   if (!isAdminAuthenticated()) {
@@ -34,27 +37,25 @@ export async function GET(req: NextRequest) {
     const page = Math.max(1, parseInt(pageParam || '1', 10) || 1);
     const pageSize = Math.min(100, Math.max(1, parseInt(pageSizeParam || '25', 10) || 25));
 
-    const nowStockholm = toZonedTime(new Date(), STOCKHOLM_TZ);
-
-    let fromIso: string;
+    // Validate user-supplied dates via parseISO (throws on malformed input)
+    let fromDateStr: string;
     if (fromParam) {
-      const parsed = parseISO(fromParam);
-      fromIso = formatInTimeZone(startOfDay(parsed), STOCKHOLM_TZ, "yyyy-MM-dd'T'HH:mm:ssXXX");
+      parseISO(fromParam); // validate
+      fromDateStr = fromParam;
     } else {
-      fromIso = formatInTimeZone(
-        startOfDay(subDays(nowStockholm, 7)),
-        STOCKHOLM_TZ,
-        "yyyy-MM-dd'T'HH:mm:ssXXX",
-      );
+      fromDateStr = stockholmDateStringDaysAgo(7);
     }
 
-    let toIso: string;
+    let toDateStr: string;
     if (toParam) {
-      const parsed = parseISO(toParam);
-      toIso = formatInTimeZone(endOfDay(parsed), STOCKHOLM_TZ, "yyyy-MM-dd'T'HH:mm:ssXXX");
+      parseISO(toParam); // validate
+      toDateStr = toParam;
     } else {
-      toIso = formatInTimeZone(endOfDay(nowStockholm), STOCKHOLM_TZ, "yyyy-MM-dd'T'HH:mm:ssXXX");
+      toDateStr = stockholmDateString();
     }
+
+    const fromIso = stockholmStartOfDay(fromDateStr);
+    const toIso = stockholmEndOfDay(toDateStr);
 
     const supabase = getServerClient();
     let query = supabase

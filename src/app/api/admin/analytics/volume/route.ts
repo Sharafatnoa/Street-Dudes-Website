@@ -9,13 +9,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdminAuthenticated } from '@/lib/adminAuth';
 import { getServerClient } from '@/lib/supabase';
-import { startOfDay, endOfDay, subDays, eachDayOfInterval, parseISO } from 'date-fns';
-import { toZonedTime, formatInTimeZone } from 'date-fns-tz';
+import { parseISO } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+import {
+  stockholmDateString,
+  stockholmDateStringDaysAgo,
+  stockholmStartOfDay,
+  stockholmEndOfDay,
+  STOCKHOLM_TZ,
+} from '@/lib/stockholmTime';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-
-const STOCKHOLM_TZ = 'Europe/Stockholm';
 
 export async function GET(req: NextRequest) {
   if (!isAdminAuthenticated()) {
@@ -27,17 +32,24 @@ export async function GET(req: NextRequest) {
     const fromParam = searchParams.get('from');
     const toParam = searchParams.get('to');
 
-    const nowStockholm = toZonedTime(new Date(), STOCKHOLM_TZ);
+    let fromDateStr: string;
+    if (fromParam) {
+      parseISO(fromParam); // validate
+      fromDateStr = fromParam;
+    } else {
+      fromDateStr = stockholmDateStringDaysAgo(30);
+    }
 
-    const fromDate = fromParam ? parseISO(fromParam) : subDays(nowStockholm, 30);
-    const toDate = toParam ? parseISO(toParam) : nowStockholm;
+    let toDateStr: string;
+    if (toParam) {
+      parseISO(toParam); // validate
+      toDateStr = toParam;
+    } else {
+      toDateStr = stockholmDateString();
+    }
 
-    const fromIso = formatInTimeZone(
-      startOfDay(fromDate),
-      STOCKHOLM_TZ,
-      "yyyy-MM-dd'T'HH:mm:ssXXX",
-    );
-    const toIso = formatInTimeZone(endOfDay(toDate), STOCKHOLM_TZ, "yyyy-MM-dd'T'HH:mm:ssXXX");
+    const fromIso = stockholmStartOfDay(fromDateStr);
+    const toIso = stockholmEndOfDay(toDateStr);
 
     const supabase = getServerClient();
     const { data: rawOrders, error } = await supabase
@@ -53,15 +65,15 @@ export async function GET(req: NextRequest) {
 
     const countsByDate: Record<string, number> = {};
 
-    // Pre-fill all dates in range with 0
-    const intervalDays = eachDayOfInterval({
-      start: startOfDay(fromDate),
-      end: startOfDay(toDate),
-    });
-
-    for (const d of intervalDays) {
-      const dateKey = formatInTimeZone(d, STOCKHOLM_TZ, 'yyyy-MM-dd');
+    // Pre-fill all dates in range with 0 using plain UTC date arithmetic
+    const [fy, fm, fd] = fromDateStr.split('-').map(Number);
+    const [ty, tm, td] = toDateStr.split('-').map(Number);
+    const cursor = new Date(Date.UTC(fy, fm - 1, fd));
+    const end = new Date(Date.UTC(ty, tm - 1, td));
+    while (cursor <= end) {
+      const dateKey = formatInTimeZone(cursor, 'UTC', 'yyyy-MM-dd');
       countsByDate[dateKey] = 0;
+      cursor.setUTCDate(cursor.getUTCDate() + 1);
     }
 
     // Count orders per date

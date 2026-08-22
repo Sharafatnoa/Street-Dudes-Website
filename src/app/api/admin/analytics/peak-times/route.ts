@@ -9,13 +9,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdminAuthenticated } from '@/lib/adminAuth';
 import { getServerClient } from '@/lib/supabase';
-import { startOfDay, endOfDay, subDays, getDay, getHours, parseISO } from 'date-fns';
-import { toZonedTime, formatInTimeZone } from 'date-fns-tz';
+import { getDay, getHours, parseISO } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
+import {
+  stockholmDateString,
+  stockholmDateStringDaysAgo,
+  stockholmStartOfDay,
+  stockholmEndOfDay,
+  STOCKHOLM_TZ,
+} from '@/lib/stockholmTime';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-
-const STOCKHOLM_TZ = 'Europe/Stockholm';
 
 const DAY_NAMES = ['Sön', 'Mån', 'Tis', 'Ons', 'Tors', 'Fre', 'Lör'];
 
@@ -29,17 +34,24 @@ export async function GET(req: NextRequest) {
     const fromParam = searchParams.get('from');
     const toParam = searchParams.get('to');
 
-    const nowStockholm = toZonedTime(new Date(), STOCKHOLM_TZ);
+    let fromDateStr: string;
+    if (fromParam) {
+      parseISO(fromParam); // validate
+      fromDateStr = fromParam;
+    } else {
+      fromDateStr = stockholmDateStringDaysAgo(30);
+    }
 
-    const fromDate = fromParam ? parseISO(fromParam) : subDays(nowStockholm, 30);
-    const toDate = toParam ? parseISO(toParam) : nowStockholm;
+    let toDateStr: string;
+    if (toParam) {
+      parseISO(toParam); // validate
+      toDateStr = toParam;
+    } else {
+      toDateStr = stockholmDateString();
+    }
 
-    const fromIso = formatInTimeZone(
-      startOfDay(fromDate),
-      STOCKHOLM_TZ,
-      "yyyy-MM-dd'T'HH:mm:ssXXX",
-    );
-    const toIso = formatInTimeZone(endOfDay(toDate), STOCKHOLM_TZ, "yyyy-MM-dd'T'HH:mm:ssXXX");
+    const fromIso = stockholmStartOfDay(fromDateStr);
+    const toIso = stockholmEndOfDay(toDateStr);
 
     const supabase = getServerClient();
     const { data: rawOrders, error } = await supabase

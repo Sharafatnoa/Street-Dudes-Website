@@ -8,13 +8,10 @@
 import { NextResponse } from 'next/server';
 import { isAdminAuthenticated } from '@/lib/adminAuth';
 import { getServerClient } from '@/lib/supabase';
-import { startOfDay } from 'date-fns';
-import { toZonedTime, formatInTimeZone } from 'date-fns-tz';
+import { stockholmDateString, stockholmStartOfDay } from '@/lib/stockholmTime';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-
-const STOCKHOLM_TZ = 'Europe/Stockholm';
 
 export async function GET() {
   if (!isAdminAuthenticated()) {
@@ -22,12 +19,7 @@ export async function GET() {
   }
 
   try {
-    const nowStockholm = toZonedTime(new Date(), STOCKHOLM_TZ);
-    const startOfDayStr = formatInTimeZone(
-      startOfDay(nowStockholm),
-      STOCKHOLM_TZ,
-      "yyyy-MM-dd'T'HH:mm:ssXXX",
-    );
+    const startOfDayStr = stockholmStartOfDay(stockholmDateString());
 
     const supabase = getServerClient();
     const { data: orders, error } = await supabase
