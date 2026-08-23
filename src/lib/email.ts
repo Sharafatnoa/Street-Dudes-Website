@@ -10,6 +10,15 @@ import { formatItemSummary } from '@/lib/formatItemSummary';
 // need to change.
 export const EMAIL_FROM_ADDRESS = 'Street Dudes <onboarding@resend.dev>';
 
+// Restaurant contact details shown in the email footer. Kept here rather
+// than inline in the template so changing them is a single edit.
+export const RESTAURANT_CONTACT = {
+  name: 'Street Dudes Borås',
+  address: 'Alingsåsvägen 40, 504 38 Borås',
+  phoneDisplay: '0705-937920',
+  phoneHref: '+46705937920',
+};
+
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export function buildOrderConfirmationEmail(
@@ -66,10 +75,12 @@ export function buildOrderConfirmationEmail(
 
   let addressHtml = '';
   if (order.fulfillmentType === 'delivery') {
-    const apt = order.deliveryApartment ? `Lgh ${order.deliveryApartment}, ` : '';
-    const postal = order.deliveryPostalCode ? `${order.deliveryPostalCode} ` : '';
-    const city = order.deliveryCity ? order.deliveryCity : '';
-    addressHtml = `<div style="margin-top: 4px;">${order.deliveryAddress}<br/>${apt}${postal}${city}</div>`;
+    const apartment = String(order.deliveryApartment ?? '').trim();
+    const address = String(order.deliveryAddress ?? '').trim();
+    const showApartment = apartment !== '' && !address.includes(apartment);
+    const aptLabel = isEn ? 'Apt' : 'Lgh';
+    const aptHtml = showApartment ? `<br/>${aptLabel} ${apartment}` : '';
+    addressHtml = `<div style="margin-top: 4px;">${address}${aptHtml}</div>`;
   }
 
   const html = `
@@ -128,9 +139,9 @@ export function buildOrderConfirmationEmail(
           </div>
 
           <div style="text-align: center; margin-top: 48px; padding-top: 32px; border-top: 1px solid #eaeaea; font-size: 13px; color: #666;">
-            <div style="font-weight: bold; color: ${brandBlack}; margin-bottom: 8px;">Street Dudes Borås</div>
-            <div>Allégatan 48, 503 37 Borås</div>
-            <div style="margin-top: 4px;">033 - 123 45 67</div>
+            <div style="font-weight: bold; color: ${brandBlack}; margin-bottom: 8px;">${RESTAURANT_CONTACT.name}</div>
+            <div>${RESTAURANT_CONTACT.address}</div>
+            <div style="margin-top: 4px;"><a href="tel:${RESTAURANT_CONTACT.phoneHref}" style="color: #666;">${RESTAURANT_CONTACT.phoneDisplay}</a></div>
           </div>
         </div>
       </body>
