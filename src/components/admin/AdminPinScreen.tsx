@@ -17,7 +17,7 @@ export function AdminPinScreen({ onSuccess }: AdminPinScreenProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleDigit(digit: string) {
-    if (pin.length < 6) {
+    if (pin.length < 10) {
       setPin((prev) => prev + digit);
       setError(null);
     }
